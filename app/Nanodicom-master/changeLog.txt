@@ -1,0 +1,92 @@
+2011.11.27 Version 1.3.1 (development)
+
+Core
+
+* Fixes #9 Added support for creating new tags properly.
+  
+Pixeler (Tool)
+
+* #10 Initial code to support the creation of DICOM files from scratch. Specifically for lossy jpeg 8-bits.
+  Still under development.
+
+nanodcm (Command line tool)
+
+* Nanodicom from the command line!
+  - Anonymizer: support for map y tags options (using json encoded). Fixes #11. Be aware that there is no 
+  handling of json errors.
+  Example: (make sure to escape the quotes with \" to have a proper json string
+  $ ./nanodcm anonymize --path=samples --map=[[16,16,\"patient0\",\"Mapped\"]] --mask=CT_small.dcm
+
+2011.11.17 Version 1.3 (stable)
+
+Core
+
+* #6 Fixed a bug that throws an exception when the file is smaller than 132 bytes
+  and not a DICOM file. Now the error is set in the errors array and a Nanodicom
+  object is returned.
+  
+* #8 Added support to return profiling data in different units. Default is ms. Only
+  seconds (s) and milliseconds (ms) supported.
+
+Getter (Tool)
+
+* #7 Added a new tool: Getter. Almost the same thing, but forces to load dictionaries
+  for convenience. Otherwise, traditional code will not load dictionaries 
+  (improves performance).
+
+nanodcm (Command line tool)
+
+* Nanodicom from the command line!
+  - Run it recursively or not.
+  - Specified the path to search.
+  - Specified the mask to use for the file pattern
+  - Display errors and warnings
+  - Do dumping of multiple files in a single run.
+  - Anonymize your files. Creates backups for you.
+
+2011.09.08, Version 1.2 (stable)
+
+Core
+
+* #3 added support for partial reading of DICOM objects. Basically, parse does
+  not throw an error anymore. A public "status" variable is updated accordingly:
+  0 => Initial (Not parsed yet), 1 => Partial (Some tags were read),
+  2 => Success (Is it a DICOM file), 3 => Failure (Not a DICOM file). Dumping
+  or the object still can be performed, but only up to the number of tags found.
+  
+* #5 added support for AT vr reading and writing.
+
+* added a summary method that displays most important information about the object.
+
+* adedd "get" method that allows to pass a default value which will be returned
+  if no value is found.
+
+* "errors" and "warnings" are now saved in their corresponding public arrays.
+
+* method "is_dicom" now parses the full dicom object and returns true or false
+  based on status after being parsed.
+
+Framework
+
+* #4 added test suites.
+
+Anonymizer
+
+* added support to pass a list of replacement values. Great when replacements need
+  to be consistent over different number of runs.
+  
+Pixeler
+
+* added support for RLE compression, jpeg 8-bit lossy and uncompressed data.
+
+* added support to read Monochrome1 and Monochrome2 or Paletter color photometric
+  representations
+
+* added support to read Planar Configuration of 0 (Color-by-pixel RGBRGB...)
+  and 1 (Color-by-plane RRRR...GGGG...BBBB...)
+
+* added support for multiple drivers (libraries). Works with gd (default),
+  imagick (Image Magick) and gmagick (Gmagick). To change driver just call
+  ->set_driver('imagick') before doing ->get_images().
+
+* saving images handle jpg (default), png and gif.
