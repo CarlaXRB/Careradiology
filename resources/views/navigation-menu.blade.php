@@ -108,6 +108,13 @@
 
                             <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
+                                <!-- Registrar usuario (visible solo para administradores) -->
+                                @if (Auth::user()->role === 'admin') 
+                                    <x-dropdown-link href="{{ route('admin.create') }}">
+                                        {{ __('Registrar usuario') }}
+                                    </x-dropdown-link>
+                                @endif
+
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf

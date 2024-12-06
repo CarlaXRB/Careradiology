@@ -37,6 +37,10 @@
         <button id="overlayButton" class="btnimg"><img src="{{ asset('assets/images/sup.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Superposición</span></div>
     </div>
+    <div class="group relative">
+        <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/sup.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Bordes</span></div>
+    </div>
     <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="group relative">
@@ -95,6 +99,7 @@
     let isNegative = false;
     let sharpnessLevel = 1;
     let isMagnifierActive = false;
+    let isEdgeDetectionActive = false;
 
     const img = document.getElementById('radiographyImage');
     const magnifierLens = document.getElementById('magnifierLens');
@@ -104,9 +109,22 @@
     const increaseSharpnessButton = document.getElementById('increaseSharpness');
     const decreaseSharpnessButton = document.getElementById('decreaseSharpness');
     const magnifierButton = document.getElementById('magnifier');
+    const edgesButton = document.getElementById('edgesButton');
 
     img.style.left = initialPosition.left;
     img.style.top = initialPosition.top;
+    // Máscaras de Sobel
+    const sobelX = [
+        [-1, 0, 1],
+        [-2, 0, 2],
+        [-1, 0, 1]
+    ];
+
+    const sobelY = [
+        [-1, -2, -1],
+        [0, 0, 0],
+        [1, 2, 1]
+    ];
 
     // Arrastre
     img.addEventListener('mousedown', (event) => {
@@ -192,6 +210,63 @@
         }
     });
 
+    // Función para aplicar la detección de bordes
+function applyEdgeDetection() {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+
+    // Dibujar la imagen en el canvas
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imgData.data;
+
+    // Aplicar el filtro de Sobel a cada píxel
+    for (let y = 1; y < canvas.height - 1; y++) {
+        for (let x = 1; x < canvas.width - 1; x++) {
+            let Gx = 0;
+            let Gy = 0;
+
+            // Aplicar las máscaras de Sobel
+            for (let ky = -1; ky <= 1; ky++) {
+                for (let kx = -1; kx <= 1; kx++) {
+                    const px = (x + kx) + (y + ky) * canvas.width;
+                    const color = data[px * 4];  // Usamos solo el canal rojo para simplificar
+                    Gx += color * sobelX[ky + 1][kx + 1];
+                    Gy += color * sobelY[ky + 1][kx + 1];
+                }
+            }
+
+            const magnitude = Math.sqrt(Gx * Gx + Gy * Gy);
+            const color = Math.min(255, magnitude);
+
+            const index = (x + y * canvas.width) * 4;
+            data[index] = color;
+            data[index + 1] = color;
+            data[index + 2] = color;
+        }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+
+    // Actualizar la imagen con los bordes aplicados
+    img.src = canvas.toDataURL();
+}
+
+// Evento del botón de bordes
+edgesButton.addEventListener('click', () => {
+    isEdgeDetectionActive = !isEdgeDetectionActive;
+
+    if (isEdgeDetectionActive) {
+        applyEdgeDetection();
+    } else {
+        img.src = img.src; // Revertir a la imagen original
+    }
+});
+
+
     //lupa
     magnifierButton.addEventListener('click', () => {
         isMagnifierActive = !isMagnifierActive;
@@ -217,17 +292,17 @@
         link.click();
     });
 
-document.querySelector('form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const dataURL = canvas.toDataURL({
-        format: 'png',
-        quality: 1.0,
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const dataURL = canvas.toDataURL({
+            format: 'png',
+            quality: 1.0,
+        });
+        document.getElementById('canvasData').value = dataURL;
+        console.log(dataURL);
     });
-    document.getElementById('canvasData').value = dataURL;
-    console.log(dataURL);
-});
 
-document.getElementById('save').onclick = function(event) {
+    document.getElementById('save').onclick = function(event) {
     event.preventDefault();
     const canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;

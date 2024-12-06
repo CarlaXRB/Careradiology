@@ -9,6 +9,7 @@ use App\Http\Controllers\SuscribeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\DicomController;
+use App\Http\Controllers\AdminUserController;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -16,6 +17,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dashboard', function () { return view('dashboard');})->name('dashboard'); 
     Route::resource('/patient',PatientController::class);
     Route::post('/search',[PatientController::class, 'search'])->name('patient.search');
+
+    Route::get('admin/users/create', [AdminUserController::class, 'create'])->name('admin.create');
+    Route::post('admin/users/new', [AdminUserController::class, 'store'])->name('admin.store');
+    Route::get('admin/users/list', [AdminUserController::class, 'index'])->name('admin.users');
+    Route::delete('/admin/destroy/{user}', [AdminUserController::class, 'destroy'])->name('admin.destroy');
 
     Route::get('/radiography',[RadiographyController::class,'index'])->name('radiography.index');
     Route::get('/radiography/create',[RadiographyController::class,'create'])->name('radiography.create');
