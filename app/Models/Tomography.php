@@ -15,6 +15,6 @@ class Tomography extends Model
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }
     public function tools():HasMany{
-        return $this->hasMany(Tool::class, 'tomography_id', 'tool_id');
+        return $this->hasMany(Tool::class, 'tomography_id', 'tool_tomography_id');
     }
 }

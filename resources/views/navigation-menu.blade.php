@@ -110,8 +110,8 @@
 
                                 <!-- Registrar usuario (visible solo para administradores) -->
                                 @if (Auth::user()->role === 'admin') 
-                                    <x-dropdown-link href="{{ route('admin.create') }}">
-                                        {{ __('Registrar usuario') }}
+                                    <x-dropdown-link href="{{ route('admin.users') }}">
+                                        {{ __('Usuarios') }}
                                     </x-dropdown-link>
                                 @endif
 

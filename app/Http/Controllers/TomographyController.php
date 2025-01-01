@@ -67,7 +67,7 @@ class TomographyController extends Controller
         return view('tomography.report', compact('tomography'));
     }
 
-    public function datareport(Request $request):View{
+    public function datareport(Request $request){
         session()->flash('findings', $request->input('findings'));
         session()->flash('diagnosis', $request->input('diagnosis'));
         session()->flash('recommendations', $request->input('recommendations'));

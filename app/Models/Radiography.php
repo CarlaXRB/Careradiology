@@ -16,6 +16,6 @@ class Radiography extends Model
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }
     public function tools():HasMany{
-        return $this->hasMany(Tool::class, 'tool_id', 'radiography_id');
+        return $this->hasMany(Tool::class, 'tool_radiography_id', 'radiography_id');
     }
 }

@@ -38,10 +38,10 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Superposición</span></div>
     </div>
     <div class="group relative">
-        <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/sup.png') }}" width="50" height="50"></button>
+        <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/edge.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Bordes</span></div>
     </div>
-    <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
+    <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
@@ -55,10 +55,6 @@
     <div class="group relative">
         <button id="draw" class="btnimg" onclick="window.location.href='{{ route('radiography.measurements', $radiography->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
-    </div>
-    <div class="group relative">
-        <button id="report" class="btnimg" onclick="window.location.href='{{ route('radiography.report', $radiography->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
-        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
 </div>
 
@@ -82,7 +78,7 @@
     <div class="grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6 pl-10">
     <img src="{{ asset('storage/tools/'.$tool->tool_uri)}}" width="128" />
         <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_date }} </a>
-        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_id }} </a>  
+        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_radiography_id }} </a>  
     <form method="POST" action="{{ route('tool.destroy', $tool->id) }}">
         @csrf
         @method('Delete')
@@ -204,67 +200,68 @@
 
     // Disminuir Contraste
     decreaseSharpnessButton.addEventListener('click', () => {
-        if (sharpnessLevel > 1) { 
+        if (sharpnessLevel > 0.5) { 
             sharpnessLevel -= 0.1; 
             img.style.filter = `contrast(${sharpnessLevel}) ${isNegative ? 'invert(1)' : ''}`;
         }
     });
 
-    // Función para aplicar la detección de bordes
-function applyEdgeDetection() {
+    //Detectar bordes
+    function applyEdgeDetection() {
     const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
+    canvas.width = img.naturalWidth; 
+    canvas.height = img.naturalHeight;
     const ctx = canvas.getContext('2d');
 
-    // Dibujar la imagen en el canvas
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const { width, height } = canvas;
     const data = imgData.data;
 
-    // Aplicar el filtro de Sobel a cada píxel
-    for (let y = 1; y < canvas.height - 1; y++) {
-        for (let x = 1; x < canvas.width - 1; x++) {
+    const outputData = new Uint8ClampedArray(data.length);
+
+    for (let y = 1; y < height - 1; y++) {
+        for (let x = 1; x < width - 1; x++) {
             let Gx = 0;
             let Gy = 0;
 
-            // Aplicar las máscaras de Sobel
             for (let ky = -1; ky <= 1; ky++) {
                 for (let kx = -1; kx <= 1; kx++) {
-                    const px = (x + kx) + (y + ky) * canvas.width;
-                    const color = data[px * 4];  // Usamos solo el canal rojo para simplificar
-                    Gx += color * sobelX[ky + 1][kx + 1];
-                    Gy += color * sobelY[ky + 1][kx + 1];
+                    const px = (x + kx) + (y + ky) * width;
+                    const intensity = data[px * 4]; // Canal rojo (escala de grises)
+                    Gx += intensity * sobelX[ky + 1][kx + 1];
+                    Gy += intensity * sobelY[ky + 1][kx + 1];
                 }
             }
 
             const magnitude = Math.sqrt(Gx * Gx + Gy * Gy);
-            const color = Math.min(255, magnitude);
+            const clampedMagnitude = Math.min(255, magnitude); // Limitar a 255
 
-            const index = (x + y * canvas.width) * 4;
-            data[index] = color;
-            data[index + 1] = color;
-            data[index + 2] = color;
+            const index = (x + y * width) * 4;
+            outputData[index] = clampedMagnitude;      // R
+            outputData[index + 1] = clampedMagnitude;  // G
+            outputData[index + 2] = clampedMagnitude;  // B
+            outputData[index + 3] = 255;               // Alpha
         }
     }
 
+    imgData.data.set(outputData);
     ctx.putImageData(imgData, 0, 0);
 
-    // Actualizar la imagen con los bordes aplicados
     img.src = canvas.toDataURL();
-}
-
-// Evento del botón de bordes
-edgesButton.addEventListener('click', () => {
-    isEdgeDetectionActive = !isEdgeDetectionActive;
-
-    if (isEdgeDetectionActive) {
-        applyEdgeDetection();
-    } else {
-        img.src = img.src; // Revertir a la imagen original
     }
-});
+
+    // Evento del botón de bordes
+    edgesButton.addEventListener('click', () => {
+        isEdgeDetectionActive = !isEdgeDetectionActive;
+
+        if (isEdgeDetectionActive) {
+            applyEdgeDetection();
+        } else {
+            img.src = img.src; // Revertir a la imagen original
+        }
+    });
 
 
     //lupa
@@ -313,7 +310,7 @@ edgesButton.addEventListener('click', () => {
 
     const dataURL = canvas.toDataURL('image/png');
 
-    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id, 'id' => $radiography->id]) }}", {
+    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient,'id' => $radiography->id]) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

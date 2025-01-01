@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
+
 use App\Http\Requests\ToolRequest;
 use App\Models\Tool;
+
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ToolController extends Controller
 {
@@ -14,9 +17,10 @@ class ToolController extends Controller
         $tools = Tool::get();
         return view('tool.index', compact('tools'));
     }
-    public function store(Request $request, $radiography_id, $id) {
+    public function store(Request $request, $radiography_id, $ci_patient, $id) {
         $tool = new Tool();
-        $tool->tool_id = $radiography_id;
+        $tool->tool_radiography_id = $radiography_id;
+        $tool->ci_patient = $ci_patient;
         $tool->tool_date = now();
 
         if ($request->has('image')) {
@@ -33,7 +37,6 @@ class ToolController extends Controller
         $tool->save();
         return response()->json(['success' => true]);
     }
-    
     public function show(Tool $tool):View{
         return view('tool.show', compact('tool'));
     }
@@ -42,5 +45,43 @@ class ToolController extends Controller
         $radiography = $tool->radiography;
         $tool->delete();
         return redirect()->route('radiography.tool', ['radiography' => $radiography->id])->with('success', 'Tool deleted successfully');
+    }
+    public function measurements(Tool $tool):View{
+        $tools = Tool::where('tool_radiography_id',$tool->tool_radiography_id)->get();
+        return view('tool.measurements', compact('tool','tools'));
+    }
+    public function report(Tool $tool):View{
+        return view('tool.report', compact('tool'));
+    }
+    public function datareport(Request $request){
+        session()->flash('findings', $request->input('findings'));
+        session()->flash('diagnosis', $request->input('diagnosis'));
+        session()->flash('recommendations', $request->input('recommendations'));
+        session()->flash('conclusions', $request->input('conclusions'));
+        return redirect()->route('radiography.pdfreport');
+    }
+    public function pdfreport(Tool $tool){
+        $patient = $tool->patient;
+        $radiography = $tool->radiography;
+        $data=[
+            'name_patient' => $patient->name_patient ?? $radiography->name_patient ?? 'No registrado',
+            'ci_patient' => $patient->ci_patient ?? $radiography->ci_patient ?? 'No registrado',
+            'birth_date' => $patient->birth_date ?? 'No disponible',
+            'gender' => $patient->gender ?? 'No disponible',
+            'insurance_code' => $patient->insurance_code ?? 'No disponible',
+            'patient_contact' => $patient->patient_contact ?? 'No disponible',
+            'family_contact' => $patient->family_contact ?? 'No disponible',
+            'radiography_id' => $radiography->radiography_id,
+            'radiography_date' => $radiography->radiography_date,
+            'radiography_type' => $radiography->radiography_type,
+            'radiography_doctor' => $radiography->radiography_doctor,
+            'radiography_charge' => $radiography->radiography_charge,
+            'findings' => request('findings'),
+            'diagnosis' => request('diagnosis'),
+            'recommendations' => request('recommendations'),
+            'conclusions' => request('conclusions'),
+        ];
+        $pdf = Pdf::loadView('tool.pdfreport', ['data'=>$data]);
+        return $pdf->download('study_report.pdf');
     }
 }

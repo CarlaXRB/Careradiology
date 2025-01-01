@@ -5,7 +5,7 @@
 @endsection
 @section('content')
 <div class="flex justify-end">
-    <a href="{{ route('radiography.tool', $radiography->id) }}" class="botton1">Atrás</a>
+    <a href="{{ route('tool.show', $tool->id) }}" class="botton1">Atrás</a>
 </div>
 <h1 class="txt-title2">Mediciones</h1>
 
@@ -30,8 +30,8 @@
         <button id="paint" class="btnimg"><img src="{{ asset('assets/images/paint.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Pintar</span></div>
     </div>
-    <form action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
-        @csrf
+    <form action="{{ route('tool.store',['radiography_id' => $tool->tool_radiography_id, 'id' => $tool->id]) }}" method="POST" enctype="multipart/form-data">
+    @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
             <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Guardar</span></div>
@@ -41,35 +41,44 @@
         <button id="downloadImage" class="btnimg"><img src="{{ asset('assets/images/download.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Decargar</span></div>
     </div>
+    <div class="group relative">
+        <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
+    </div>
 </div>
 
 <div class="flex justify-center mt-[40px] mb-[30px]"><canvas id="canvas" width="1100" style="border: 1px solid #ccc; display: block;"></canvas></div>
 <div class="flex justify-center mb-4"><button id="clearButton" class="botton3">Limpiar</button></div>
 
 <div>
-    <h1 class="txt-title2">CONTINUA EDITANDO</h1>
+    <h1 class="txt-title2">VER HERRAMIENTAS</h1>
+    <div class="flex justify-end"><a href="javascript:void(0);" class="botton3" id="updateButton">Actualizar</a></div>
     <div class="grid grid-cols-4 gap-4 border-b border-cyan-500">
         <h3 class="txt-head">Vista previa</h3>  
         <h3 class="txt-head">Fecha de creación</h3>
         <h3 class="txt-head">ID del estudio</h3>
     </div>
-    @foreach($radiography->tools as $tool)
+</div>
+
+@forelse($tools as $tool)
     <div class="grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6 pl-10">
     <img src="{{ asset('storage/tools/'.$tool->tool_uri)}}" width="128" />
         <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_date }} </a>
-        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_radiography_id }} </a> 
+        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_radiography_id }} </a>    
         <form method="POST" action="{{ route('tool.destroy', $tool->id) }}">
-        @csrf
-        @method('Delete')
-        <div class="flex justify-end"><input type="submit" value="Eliminar" class="botton2"/></div>
-    </form>     
+            @csrf
+            @method('Delete')
+            <div class="flex justify-end"><input type="submit" value="Eliminar" class="botton2"/></div>
+        </form>
     </div>
-    @endforeach
-</div>
+    @empty
+    <h2 class="text-white ml-5">No data</h2>
+@endforelse
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
 <script>
     const canvas = new fabric.Canvas('canvas');
-    const imgUrl = "{{ asset('storage/radiographies/'.$radiography->radiography_uri) }}";
+    const imgUrl = "{{ asset('storage/tools/'.$tool->tool_uri) }}";
     const img = new Image();
     img.src = imgUrl;
 
@@ -478,7 +487,7 @@ downloadImageButton.addEventListener('click', () => {
         quality: 1.0,
     });
     const link = document.createElement('a');
-    link.download = `radiography_{{ $radiography->id }}_${new Date().toISOString().slice(0, 10)}.png`;
+    link.download = `tool_{{ $tool->id }}_${new Date().toISOString().slice(0, 10)}.png`;
     link.href = dataURL;
     link.click();
 });
@@ -503,7 +512,7 @@ document.getElementById('save').onclick = function(event) {
     const dataURL = canvas.toDataURL('image/png');
 
     // Envía la imagen al servidor
-    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id,'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}", {
+    fetch("{{ route('tool.store', ['radiography_id' => $tool->tool_radiography_id, 'id' => $tool->id]) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -523,5 +532,8 @@ document.getElementById('save').onclick = function(event) {
         console.error("Error al guardar la imagen:", error);
     });
 };
+document.getElementById('updateButton').addEventListener('click', function () {
+    location.reload();
+});
 </script>
 @endsection

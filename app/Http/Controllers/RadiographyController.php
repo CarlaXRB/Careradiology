@@ -21,28 +21,22 @@ class RadiographyController extends Controller
     {
         $this->imageFilterService = $imageFilterService;
     }
-
     public function index():View{
         $radiographies = Radiography::get();
         return view('radiography.index', compact('radiographies'));
     }
-
     public function create():View{
         return view('radiography.create');
     }
-
     public function show(Radiography $radiography):View{
         return view('radiography.show', compact('radiography'));
     }
-
     public function tool(Radiography $radiography):View{
         return view('radiography.tool', compact('radiography'));
     }
-
     public function measurements(Radiography $radiography):View{
         return view('radiography.measurements', compact('radiography'));
     }
-
     public function store(RadiographyRequest $request):RedirectResponse{
         $dicomFile = $request->file('radiography_file');
         $dicomFileName = time() . '.' . $dicomFile->getClientOriginalExtension();
@@ -72,12 +66,10 @@ class RadiographyController extends Controller
 
         return redirect()->route('radiography.index')->with('success','Radiografia creada');
     }
-
     public function report(Radiography $radiography):View{
         return view('radiography.report', compact('radiography'));
     }
-
-    public function datareport(Request $request):View{
+    public function datareport(Request $request){
         session()->flash('findings', $request->input('findings'));
         session()->flash('diagnosis', $request->input('diagnosis'));
         session()->flash('recommendations', $request->input('recommendations'));
@@ -105,7 +97,7 @@ class RadiographyController extends Controller
             'conclusions' => request('conclusions'),
         ];
         $pdf = Pdf::loadView('radiography.pdfreport', ['data'=>$data]);
-        return $pdf->download('radiography_report.pdf');
+        return $pdf->download('study_report.pdf');
     }
     public function search(Request $request) {
         $search = $request->input('search');

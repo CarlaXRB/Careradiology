@@ -12,9 +12,12 @@ class Tool extends Model
     protected $guarded=[];
 
     public function radiography():BelongsTo{
-        return $this->belongsTo(Radiography::class, 'tool_id', 'radiography_id');
+        return $this->belongsTo(Radiography::class, 'tool_radiography_id', 'radiography_id');
     }
     public function tomography():BelongsTo{
-        return $this->belongsTo(Tomography::class, 'tool_id', 'tomography_id');
+        return $this->belongsTo(Tomography::class, 'tool_tomography_id', 'tomography_id');
+    }
+    public function patient():BelongsTo{
+        return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }
 }

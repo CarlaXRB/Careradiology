@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('tools', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tool_id');
+            $table->unsignedBigInteger('tool_radiography_id')->default(0);
+            $table->unsignedBigInteger('tool_tomography_id')->default(0);
+            $table->unsignedBigInteger('ci_patient')->default(0);
             $table->date('tool_date');
             $table->string('tool_uri');
             $table->timestamps();

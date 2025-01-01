@@ -4,6 +4,7 @@
     {{ __('Usuarios') }}
 @endsection
 @section('content')
+<div class="flex justify-end"><a href="{{route('admin.create')}}" class="botton1">Crear Usuario</a> </div>
 <h1 class="txt-title1">USUARIOS</h1>
 <div class="grid grid-cols-5 gap-4 border-b border-cyan-500 mb-3">
     <h3 class="txt-head">Nombre de usuario</h3>

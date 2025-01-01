@@ -17,4 +17,7 @@ class Patient extends Model
     public function tomographies():HasMany{
         return $this->hasMany(Tomography::class, 'ci_patient', 'ci_patient');
     }
+    public function tools():HasMany{
+        return $this->hasMany(Tool::class, 'ci_patient', 'ci_patient');
+    }
 }

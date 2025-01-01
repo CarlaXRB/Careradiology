@@ -11,17 +11,14 @@
                 </div>
             </div>
             <div class="footer-card">
-                <h5>DICOM:</h5>
-                <p>Lectura del formato para imgánes dicom adquiridas mediante:</p>
+                <h5>DICOM</h5>
+                <p>Lectura del formato para imágenes adquiridas mediante:</p>
                 <p>- Rayos X</p>
                 <p>- Tomografía Computarizada</p>
             </div>
             <div class="footer-card">
-                <h5>Pronto:</h5>
-                <p>Conexión con otros sistemas salinatarios:</p>
-                <p>- PAC'S</p>
-                <p>- CIS</p>
-                <p>- EHR</p>
+                <h5>Muy Pronto</h5>
+                <p>¡Nuevos sistemas salinatarios! Estamos comprometidos con el cuidado de la salud.</p>
             </div>
             <div class="footer-card">
                 <h5>¿Ineteresado?</h5>
@@ -30,6 +27,6 @@
             </div>
         </div>
         <div class="copyright">
-            <p>2024 Todos los servicios reservados. Desarrollado por CareRadiologyProject</p>
+            <p>2024 Todos los servicios reservados. Desarrollado por CodeByXC</p>
         </div>
     </footer>

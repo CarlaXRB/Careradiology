@@ -6,7 +6,6 @@ use App\Http\Controllers\RadiographyController;
 use App\Http\Controllers\TomographyController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SuscribeController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\AdminUserController;
@@ -44,11 +43,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/tomography/{tomography}/pdfreport', [TomographyController::class, 'pdfreport'])->name('tomography.pdfreport');
 
     Route::get('/tool',[ToolController::class,'index'])->name('tool.index');
-    Route::post('/tool/store/{radiography_id}/{id}', [ToolController::class, 'store'])->name('tool.store');
+    Route::post('/tool/store/{radiography_id}/{ci_patient}/{id}', [ToolController::class, 'store'])->name('tool.store');
     Route::delete('/tool/{tool}/radiography/{id}', [ToolController::class, 'destroy'])->name('tool.destroy');
     Route::get('/tool/show/{tool}',[ToolController::class,'show'])->name('tool.show'); 
     Route::delete('/tool/destroy/{tool}', [ToolController::class, 'destroy'])->name('tool.destroy');
     Route::post('/save-image', [ToolController::class, 'saveImage'])->name('tool.image');
+    Route::get('/tool/measurements/{tool}',[ToolController::class,'measurements'])->name('tool.measurements');
+    Route::get('/tool/report/{tool}',[ToolController::class,'report'])->name('tool.report');
+    Route::post('/tool/{tool}/pdfreport', [ToolController::class, 'pdfreport'])->name('tool.pdfreport');
 
 });
 
