@@ -9,6 +9,7 @@ use App\Http\Controllers\SuscribeController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\AdminUserController;
+use App\Models\Tomography;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -36,16 +37,23 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tomography',[TomographyController::class,'index'])->name('tomography.index');
     Route::get('/tomography/create',[TomographyController::class,'create'])->name('tomography.create');
     Route::post('/tomography/store',[TomographyController::class,'store'])->name('tomography.store');
-    Route::get('/tomography/show/{tomography}',[TomographyController::class,'show'])->name('tomography.show');
     Route::get('/tomography/tool/{tomography}',[TomographyController::class,'tool'])->name('tomography.tool');
     Route::get('/tomography/measurements/{tomography}',[TomographyController::class,'measurements'])->name('tomography.measurements');
     Route::get('/tomography/report/{tomography}',[TomographyController::class,'report'])->name('tomography.report');
     Route::post('/tomography/{tomography}/pdfreport', [TomographyController::class, 'pdfreport'])->name('tomography.pdfreport');
+    Route::get('/tomography/convert/{id}', [TomographyController::class, 'convert'])->name('tomography.convert');
+    Route::get('/tomography/show/{id}', [TomographyController::class, 'show'])->name('tomography.show');
+    Route::get('tomography/image/{tomographyId}/{image}', [TomographyController::class, 'showSelectedImage'])->name('tomography.image');
+    Route::get('/tomography/superposicion/{id}', [TomographyController::class, 'superposicion'])->name('tomography.superposicion');
+
+    Route::get('/ver/images', [TomographyController::class, 'ishowImages'])->name('tomography.ishowimages');
+    Route::get('/ver/images/{num}', [TomographyController::class, 'igetImage'])->name('tomography.igetimage');
 
     Route::get('/tool',[ToolController::class,'index'])->name('tool.index');
-    Route::post('/tool/store/{radiography_id}/{ci_patient}/{id}', [ToolController::class, 'store'])->name('tool.store');
-    Route::delete('/tool/{tool}/radiography/{id}', [ToolController::class, 'destroy'])->name('tool.destroy');
+    Route::post('/tool/store/radiography/{radiography_id}/{ci_patient}/{id}', [ToolController::class, 'storeRadiography'])->name('tool.store');
+    Route::post('/tool/store/tomography/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'storeTomography'])->name('tool.storeTomography');
     Route::get('/tool/show/{tool}',[ToolController::class,'show'])->name('tool.show'); 
+    Route::get('/tool/ver/{tool}', [ToolController::class, 'ver'])->name('tool.ver');
     Route::delete('/tool/destroy/{tool}', [ToolController::class, 'destroy'])->name('tool.destroy');
     Route::post('/save-image', [ToolController::class, 'saveImage'])->name('tool.image');
     Route::get('/tool/measurements/{tool}',[ToolController::class,'measurements'])->name('tool.measurements');

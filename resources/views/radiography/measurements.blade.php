@@ -48,6 +48,7 @@
 
 <div>
     <h1 class="txt-title2">CONTINUA EDITANDO</h1>
+    <div class="flex justify-end"><a href="javascript:void(0);" class="botton3" id="updateButton">Actualizar</a></div>
     <div class="grid grid-cols-4 gap-4 border-b border-cyan-500">
         <h3 class="txt-head">Vista previa</h3>  
         <h3 class="txt-head">Fecha de creación</h3>
@@ -523,5 +524,8 @@ document.getElementById('save').onclick = function(event) {
         console.error("Error al guardar la imagen:", error);
     });
 };
+document.getElementById('updateButton').addEventListener('click', function () {
+    location.reload();
+});
 </script>
 @endsection

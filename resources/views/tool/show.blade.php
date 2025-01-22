@@ -5,34 +5,34 @@
 @endsection
 @section('content')
 
-<div class="flex justify-end"><a href="{{ route('radiography.index')}}" class="botton1">Volver a Radiografias</a></div>
+<div class="flex justify-end"><a href="{{ route('dashboard')}}" class="botton1">Inicio</a></div>
 <h1 class="txt-title2">ESTUDIO DEL PACIENTE</h1>
-<div class="grid grid-cols-[1fr,120px]">
-    <div class="relative flex justify-center mt-[20px] mb-[30px]">
-        <div class="overflow-auto border border-gray-400" style="width: 1000px; height: 800px; position: relative;">
-           <img id="radiographyImage" 
-                src="{{ asset('storage/tools/'.$tool->tool_uri) }}" 
-                style="max-width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-       </div>
+<div class="relative flex justify-center items-center space-x-3 mb-10">
+    <div class="group relative">
+        <button id="zoomIn" class="btnimg"><img src="{{ asset('assets/images/zoom.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Acercar</span></div>
     </div>
-    <div class="relative flex flex-col items-center space-y-10 mt-[30px]">
-        <div class="group relative">
-            <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
-            <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
-        </div>
-        <div class="group relative">
-            <button id="zoomIn" class="btnimg"><img src="{{ asset('assets/images/zoom.png') }}" width="50" height="50"></button>
-            <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Acercar</span></div>
-        </div>
-        <div class="group relative">
-            <button id="zoomOut" class="btnimg"><img src="{{ asset('assets/images/unzoom.png') }}" width="50" height="50"></button>
-            <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Alejar</span></div>
-        </div>
+    <div class="group relative">
+        <button id="zoomOut" class="btnimg"><img src="{{ asset('assets/images/unzoom.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Alejar</span></div>
+    </div>
+    <div class="group relative">
+        <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/filter.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Editar</span></div>
+    </div>
+    <div class="group relative">
+        <button id="draw" class="btnimg" onclick="window.location.href='{{ route('tool.measurements', $tool->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
+    </div>
+    <div class="group relative">
+        <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
 </div>
-
-<div class="flex justify-center mb-4">
-    <div class="mt-2"><a href="{{ route('tool.measurements', $tool->id) }}" class="botton2">Continua editando</a></div>
+<div class="relative flex justify-center mt-[10px] mb-[20px]">
+    <div class="overflow-auto" style="width: 1100px; height: 800px; position: relative;">
+       <img id="radiographyImage" src="{{ asset('storage/tools/'.$tool->tool_uri) }}" style="max-width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+   </div>
 </div>
 
 <div class="flex ml-10"><h1 class="txt-title2">Datos del Paciente:</h1></div>
@@ -47,20 +47,41 @@
     <h3 class="txt2">Contacto de familiar:</h3><p>{{ $tool->patient->family_contact }} </p>
 </div>
 @else
+@isset($tool->radiography)
     <div class="grid grid-cols-2 gap-4 text-gray-900 dark:text-white">
         <h3 class="txt2">Nombre del paciente:</h3><p>{{ $tool->radiography->name_patient }} </p>
         <h3 class="txt2">Carnet de Identidad:</h3><p>{{ $tool->radiography->ci_patient }} </p>
     </div>
-    <h1 class="ml-20 mt-8 mb-5">Paciente no registrado en la base de datos.</h1>
+@else
+    @isset($tool->tomography)
+        <div class="grid grid-cols-2 gap-4 text-gray-900 dark:text-white">
+            <h3 class="txt2">Nombre del paciente:</h3><p>{{ $tool->tomography->name_patient }} </p> 
+            <h3 class="txt2">Carnet de Identidad:</h3><p>{{ $tool->tomography->ci_patient }} </p> 
+        </div>
+    @else
+        <h1 class="ml-20 mt-8 mb-5">Paciente no registrado en la base de datos.</h1>
+    @endisset
+@endisset
 @endif
-<div class="flex ml-10"><h1 class="txt-title2">Datos de la Radiografía:</h1></div>
+<div class="flex ml-10"><h1 class="txt-title2">Datos del estudio:</h1></div>
 <div class="grid grid-cols-2 gap-4 mb-10">
-    <h3 class="txt2">ID Radiografia:</h3><p>{{ $tool->tool_radiography_id}} </p>
-    <h3 class="txt2">Fecha de la radiografia:</h3><p>{{ $tool->radiography->radiography_date }} </p>
-    <h3 class="txt2">Tipo de radiografia:</h3><p>{{ $tool->radiography->radiography_type }} </p>
-    <h3 class="txt2">Doctor que solicito el estudio:</h3><p>{{ $tool->radiography->radiography_doctor }} </p>
-    <h3 class="txt2">Radiologo:</h3><p>{{ $tool->radiography->radiography_charge }} </p>
+    @isset($tool->radiography)
+        <h3 class="txt2">ID Radiografía:</h3><p>{{ $tool->tool_radiography_id }} </p>
+        <h3 class="txt2">Fecha de la radiografía:</h3><p>{{ $tool->radiography->radiography_date }} </p>
+        <h3 class="txt2">Tipo de radiografía:</h3><p>{{ $tool->radiography->radiography_type }} </p>
+        <h3 class="txt2">Doctor que solicitó el estudio:</h3><p>{{ $tool->radiography->radiography_doctor }} </p>
+        <h3 class="txt2">Radiólogo:</h3><p>{{ $tool->radiography->radiography_charge }} </p>
+    @elseif(isset($tool->tomography))
+        <h3 class="txt2">ID Tomografía:</h3><p>{{ $tool->tool_tomography_id }} </p>
+        <h3 class="txt2">Fecha de la tomografía:</h3><p>{{ $tool->tomography->tomography_date }} </p>
+        <h3 class="txt2">Tipo de tomografía:</h3><p>{{ $tool->tomography->tomography_type }} </p>
+        <h3 class="txt2">Doctor que solicitó el estudio:</h3><p>{{ $tool->tomography->tomography_doctor }} </p>
+        <h3 class="txt2">Radiólogo:</h3><p>{{ $tool->tomography->tomography_charge }} </p>
+    @else
+        <p>No se encontraron los datos de radiografía ni de tomografía.</p>
+    @endisset
 </div>
+
 
 <script>
     let zoomLevel = 1;

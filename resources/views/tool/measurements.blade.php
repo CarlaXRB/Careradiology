@@ -30,7 +30,7 @@
         <button id="paint" class="btnimg"><img src="{{ asset('assets/images/paint.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Pintar</span></div>
     </div>
-    <form action="{{ route('tool.store',['radiography_id' => $tool->tool_radiography_id, 'id' => $tool->id]) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('tool.store',['radiography_id' => $tool->tool_radiography_id,'ci_patient' => $tool->ci_patient, 'id' => $tool->id]) }}" method="POST" enctype="multipart/form-data">
     @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-<div class="flex justify-center mt-[40px] mb-[30px]"><canvas id="canvas" width="1100" style="border: 1px solid #ccc; display: block;"></canvas></div>
+<div class="flex justify-center mt-[40px] mb-[30px]"><canvas id="canvas" width="1100" style="display: block;"></canvas></div>
 <div class="flex justify-center mb-4"><button id="clearButton" class="botton3">Limpiar</button></div>
 
 <div>
@@ -61,7 +61,7 @@
 </div>
 
 @forelse($tools as $tool)
-    <div class="grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6 pl-10">
+    <div class="grid grid-cols-4 gap-4 mb-3 text-white pl-6 pl-10">
     <img src="{{ asset('storage/tools/'.$tool->tool_uri)}}" width="128" />
         <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_date }} </a>
         <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_radiography_id }} </a>    
@@ -512,7 +512,7 @@ document.getElementById('save').onclick = function(event) {
     const dataURL = canvas.toDataURL('image/png');
 
     // Envía la imagen al servidor
-    fetch("{{ route('tool.store', ['radiography_id' => $tool->tool_radiography_id, 'id' => $tool->id]) }}", {
+    fetch("{{ route('tool.store', ['radiography_id' => $tool->tool_radiography_id, 'ci_patient' => $tool->ci_patient, 'id' => $tool->id]) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

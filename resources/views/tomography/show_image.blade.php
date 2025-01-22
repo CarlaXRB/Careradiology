@@ -1,11 +1,11 @@
 @extends('layouts._partials.layout')
-@section('title', 'Show Radiography')
+@section('title', 'Show Tomography')
 @section('subtitle')
     {{ __('Herramientas') }}
 @endsection
 @section('content')
 <div class="flex justify-end">
-    <a href="{{ route('radiography.show', $radiography->id)}}" class="botton1">Atrás</a>
+    <a href="{{ route('tomography.show', $tomography->id)}}" class="botton1">Atrás</a>
 </div>
 <h1 class="txt-title2">Herramientas</h1>
 <div class="relative flex justify-center space-x-2">
@@ -34,55 +34,33 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Menos_Contraste</span></div>
     </div>
     <div class="group relative">
+        <button id="overlayButton" class="btnimg"><img src="{{ asset('assets/images/sup.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Superposición</span></div>
+    </div>
+    <div class="group relative">
         <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/edge.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Bordes</span></div>
     </div>
-    <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <div class="group relative">
-            <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
-            <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Guardar</span></div>
-        </div>
-    </form>
     <div class="group relative">
         <button id="downloadImage" class="btnimg"><img src="{{ asset('assets/images/download.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Decargar</span></div>
     </div>
     <div class="group relative">
-        <button id="draw" class="btnimg" onclick="window.location.href='{{ route('radiography.measurements', $radiography->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
+        <button id="draw" class="btnimg" onclick="window.location.href='{{ route('tomography.measurements', $tomography->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
     </div>
 </div>
 
 <div class="relative flex justify-center mt-[50px] mb-[30px]">
     <div class="overflow-auto" style="width: 1100px; height: 700px; position: relative;">
-        <img id="radiographyImage" 
-             src="{{ asset('storage/radiographies/'.$radiography->radiography_uri) }}" 
+        <img id="tomographyImage" src="{{ asset('storage/tomographies/converted_images/'.$tomographyId.'/'.$image) }}"
              style="width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-        <div id="magnifierLens" style="display: none; position: absolute; border: 1px solid #000; border-radius: 50%; pointer-events: none;"></div> <!-- Lente de la lupa -->
+        <div id="magnifierLens" style="display: none; position: absolute; border: 1px solid #000; border-radius: 50%; pointer-events: none;"></div>
     </div>
 </div>
-<div>
-    <h1 class="txt-title2">CONTINUA EDITANDO</h1>
-    <div class="flex justify-end"><a href="javascript:void(0);" class="botton3" id="updateButton">Actualizar</a></div>
-    <div class="grid grid-cols-4 gap-4 border-b border-cyan-500">
-        <h3 class="txt-head">Vista previa</h3>  
-        <h3 class="txt-head">Fecha de creación</h3>
-        <h3 class="txt-head">ID del estudio</h3>
-    </div>
-    @foreach($radiography->tools as $tool)
-    <div class="grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6 pl-10">
-    <img src="{{ asset('storage/tools/'.$tool->tool_uri)}}" width="128" />
-        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_date }} </a>
-        <a href="{{ route('tool.show', $tool->id) }}"> {{ $tool->tool_radiography_id }} </a>  
-    <form method="POST" action="{{ route('tool.destroy', $tool->id) }}">
-        @csrf
-        @method('Delete')
-        <div class="flex justify-end"><input type="submit" value="Eliminar" class="botton2"/></div>
-    </form>
-    </div>
-    @endforeach
-</div>
+
+<canvas id="imageCanvas" style="display: none;"></canvas>
+
 <script>
     let zoomLevel = 1;
     let initialPosition = { left: '50%', top: '50%' };
@@ -93,7 +71,7 @@
     let isMagnifierActive = false;
     let isEdgeDetectionActive = false;
 
-    const img = document.getElementById('radiographyImage');
+    const img = document.getElementById('tomographyImage');
     const magnifierLens = document.getElementById('magnifierLens');
     const zoomInButton = document.getElementById('zoomIn');
     const zoomOutButton = document.getElementById('zoomOut');
@@ -102,9 +80,18 @@
     const decreaseSharpnessButton = document.getElementById('decreaseSharpness');
     const magnifierButton = document.getElementById('magnifier');
     const edgesButton = document.getElementById('edgesButton');
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
 
     img.style.left = initialPosition.left;
     img.style.top = initialPosition.top;
+
+    img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+    };
+
     // Máscaras de Sobel
     const sobelX = [
         [-1, 0, 1],
@@ -182,153 +169,82 @@
         }
     });
 
-    //Negativo
+    // Negativo
     invertColorsButton.addEventListener('click', () => {
         isNegative = !isNegative; 
-        img.style.filter = isNegative ? 'invert(1)' : 'none'; 
+        if (isNegative) {
+            img.style.filter += ' invert(1)'; // no sobreescribir, agregar
+        } else {
+            img.style.filter = img.style.filter.replace(' invert(1)', ''); 
+        }
     });
 
-    // Aumentar Contraste
+    // Aumentar contraste
     increaseSharpnessButton.addEventListener('click', () => {
         sharpnessLevel += 0.1; 
-        img.style.filter = `contrast(${sharpnessLevel}) ${isNegative ? 'invert(1)' : ''}`; 
+        img.style.filter = `contrast(${sharpnessLevel})`; 
     });
 
-    // Disminuir Contraste
+    // Disminuir contraste
     decreaseSharpnessButton.addEventListener('click', () => {
-        if (sharpnessLevel > 0.5) { 
+        if (sharpnessLevel > 1) {
             sharpnessLevel -= 0.1; 
-            img.style.filter = `contrast(${sharpnessLevel}) ${isNegative ? 'invert(1)' : ''}`;
+            img.style.filter = `contrast(${sharpnessLevel})`; 
         }
     });
 
-    //Detectar bordes
-    function applyEdgeDetection() {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth; 
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
+    // Lupa
+    magnifierButton.addEventListener('click', () => {
+        isMagnifierActive = !isMagnifierActive; 
+        magnifierLens.style.display = isMagnifierActive ? 'block' : 'none';
+    });
 
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const { width, height } = canvas;
-    const data = imgData.data;
-
-    const outputData = new Uint8ClampedArray(data.length);
-
-    for (let y = 1; y < height - 1; y++) {
-        for (let x = 1; x < width - 1; x++) {
-            let Gx = 0;
-            let Gy = 0;
-
-            for (let ky = -1; ky <= 1; ky++) {
-                for (let kx = -1; kx <= 1; kx++) {
-                    const px = (x + kx) + (y + ky) * width;
-                    const intensity = data[px * 4]; // Canal rojo (escala de grises)
-                    Gx += intensity * sobelX[ky + 1][kx + 1];
-                    Gy += intensity * sobelY[ky + 1][kx + 1];
-                }
-            }
-
-            const magnitude = Math.sqrt(Gx * Gx + Gy * Gy);
-            const clampedMagnitude = Math.min(255, magnitude); // Limitar a 255
-
-            const index = (x + y * width) * 4;
-            outputData[index] = clampedMagnitude;      // R
-            outputData[index + 1] = clampedMagnitude;  // G
-            outputData[index + 2] = clampedMagnitude;  // B
-            outputData[index + 3] = 255;               // Alpha
-        }
-    }
-
-    imgData.data.set(outputData);
-    ctx.putImageData(imgData, 0, 0);
-
-    img.src = canvas.toDataURL();
-    }
-
-    // Evento del botón de bordes
+    // Borde
     edgesButton.addEventListener('click', () => {
         isEdgeDetectionActive = !isEdgeDetectionActive;
 
         if (isEdgeDetectionActive) {
+            img.style.filter += ' grayscale(100%)'; // no sobreescribir, agregar
             applyEdgeDetection();
         } else {
-            img.src = img.src; // Revertir a la imagen original
+            img.style.filter = img.style.filter.replace(' grayscale(100%)', ''); 
         }
     });
 
+    function applyEdgeDetection() {
+        const imgData = ctx.getImageData(0, 0, img.width, img.height);
+        const data = imgData.data;
+        const width = img.width;
+        const height = img.height;
 
-    //lupa
-    magnifierButton.addEventListener('click', () => {
-        isMagnifierActive = !isMagnifierActive;
-        if (!isMagnifierActive) {
-            magnifierLens.style.display = 'none';
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                const sobelXValue = applySobelKernel(x, y, sobelX);
+                const sobelYValue = applySobelKernel(x, y, sobelY);
+
+                const magnitude = Math.sqrt(sobelXValue * sobelXValue + sobelYValue * sobelYValue);
+                const pixelIndex = (y * width + x) * 4;
+
+                const edgeColor = magnitude > 255 ? 255 : magnitude;
+                data[pixelIndex] = data[pixelIndex + 1] = data[pixelIndex + 2] = edgeColor;
+            }
         }
-    });
-    //Descargar Imagen
-    const downloadImageButton = document.getElementById('downloadImage');
 
-    downloadImageButton.addEventListener('click', () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d');
+        ctx.putImageData(imgData, 0, 0);
+    }
 
-        ctx.filter = img.style.filter;
-        ctx.drawImage(img, 0, 0);
+    function applySobelKernel(x, y, kernel) {
+        let sum = 0;
 
-        const link = document.createElement('a');
-        link.download = `radiography_{{ $radiography->id }}_${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
-    });
-
-    document.querySelector('form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const dataURL = canvas.toDataURL({
-            format: 'png',
-            quality: 1.0,
-        });
-        document.getElementById('canvasData').value = dataURL;
-        console.log(dataURL);
-    });
-
-    document.getElementById('save').onclick = function(event) {
-    event.preventDefault();
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.filter = img.style.filter;
-    ctx.drawImage(img, 0, 0);
-
-    const dataURL = canvas.toDataURL('image/png');
-
-    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient,'id' => $radiography->id]) }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ image: dataURL })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Imagen guardada exitosamente");
-        } else {
-            alert("Error al guardar la imagen");
+        for (let ky = -1; ky <= 1; ky++) {
+            for (let kx = -1; kx <= 1; kx++) {
+                const pixelIndex = ((y + ky) * img.width + (x + kx)) * 4;
+                const pixelValue = (img.width * 4 * (y + ky) + (x + kx)) * 4;
+                sum += kernel[ky + 1][kx + 1] * pixelValue;
+            }
         }
-    })
-    .catch(error => {
-        console.error("Error al guardar la imagen:", error);
-    });
-};
-//Actualizar
-document.getElementById('updateButton').addEventListener('click', function () {
-    location.reload();
-});
+
+        return sum;
+    }
 </script>
 @endsection

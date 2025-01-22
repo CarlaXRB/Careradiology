@@ -20,8 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('tomography_id');
             $table->date('tomography_date');
             $table->string('tomography_type');
-            $table->string('tomography_uri');
-            $table->string('tomography_dicom_uri');
+            $table->string('tomography_uri')->nullable();
+            $table->string('tomography_dicom_uri')->nullable();
             $table->string('tomography_doctor');
             $table->string('tomography_charge');
             $table->timestamps();
