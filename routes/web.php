@@ -45,18 +45,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tomography/show/{id}', [TomographyController::class, 'show'])->name('tomography.show');
     Route::get('tomography/image/{tomographyId}/{image}', [TomographyController::class, 'showSelectedImage'])->name('tomography.image');
     Route::get('/tomography/superposicion/{id}', [TomographyController::class, 'superposicion'])->name('tomography.superposicion');
-
-    Route::get('/ver/images', [TomographyController::class, 'ishowImages'])->name('tomography.ishowimages');
-    Route::get('/ver/images/{num}', [TomographyController::class, 'igetImage'])->name('tomography.igetimage');
+    Route::post('/tomography/search',[TomographyController::class, 'search'])->name('tomography.search');
 
     Route::get('/tool',[ToolController::class,'index'])->name('tool.index');
-    Route::post('/tool/store/radiography/{radiography_id}/{ci_patient}/{id}', [ToolController::class, 'storeRadiography'])->name('tool.store');
+    Route::post('/tool/new/tool/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'new'])->name('tool.new');
+    Route::post('/tool/store/tool/{radiography_id}/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'storeTool'])->name('tool.store');
     Route::post('/tool/store/tomography/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'storeTomography'])->name('tool.storeTomography');
     Route::get('/tool/show/{tool}',[ToolController::class,'show'])->name('tool.show'); 
     Route::get('/tool/ver/{tool}', [ToolController::class, 'ver'])->name('tool.ver');
+    Route::get('/tool/search/{id}', [ToolController::class, 'search'])->name('tool.search');
     Route::delete('/tool/destroy/{tool}', [ToolController::class, 'destroy'])->name('tool.destroy');
     Route::post('/save-image', [ToolController::class, 'saveImage'])->name('tool.image');
-    Route::get('/tool/measurements/{tool}',[ToolController::class,'measurements'])->name('tool.measurements');
+    Route::get('/tool/measurements/{id}',[ToolController::class,'measurements'])->name('tool.measurements');
     Route::get('/tool/report/{tool}',[ToolController::class,'report'])->name('tool.report');
     Route::post('/tool/{tool}/pdfreport', [ToolController::class, 'pdfreport'])->name('tool.pdfreport');
 

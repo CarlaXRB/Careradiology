@@ -8,7 +8,6 @@ use Illuminate\View\View;
 use App\Http\Requests\PatientRequest;
 use App\Models\Patient;
 
-
 class PatientController extends Controller
 {
     public function index():View{
@@ -20,7 +19,7 @@ class PatientController extends Controller
     }
     public function store(PatientRequest $request):RedirectResponse{
         Patient::create($request->all());
-        return redirect()->route('patient.index')->with('success','Patient create');
+        return redirect()->route('patient.index')->with('success','Paciente creado');
     }
     public function show(Patient $patient):View{
         return view('patient.show', compact('patient'));
@@ -30,11 +29,11 @@ class PatientController extends Controller
     }
     public function update(PatientRequest $request, Patient $patient):RedirectResponse{
         $patient->update($request->all());
-        return redirect()->route('patient.index')->with('success','Patient update');
+        return redirect()->route('patient.index')->with('success','Datos actualizados');
     }
     public function destroy(Patient $patient):RedirectResponse{
         $patient->delete();
-        return redirect()->route('patient.index')->with('danger','Patient deleted');
+        return redirect()->route('patient.index')->with('danger','Registro borrado');
     }
     public function search(Request $request) {
         $search = $request->input('search');

@@ -30,7 +30,7 @@
         <button id="paint" class="btnimg"><img src="{{ asset('assets/images/paint.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Pintar</span></div>
     </div>
-    <form action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'tomography_id' => '0', 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
@@ -42,8 +42,26 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Decargar</span></div>
     </div>
 </div>
+<div class="flex justify-end mb-4">
+    <label for="scaleSelect" class="mr-3 text-white" style="font-size: 18px; margin-top: 8px;">Escala:</label>
+    <select id="scaleSelect" style="padding: 8px; padding-right: 30px; padding-left: 12px; border-radius: 10px; background-color: #1e2a3a;color: #00bcd4;border: 2px solid #00bcd4;font-size: 16px; font-weight: bold; transition: background-color 0.3s, border-color 0.3s;margin-right: 70px;appearance: none; /* Elimina la flecha por defecto */-webkit-appearance: none; /* Para Safari */-moz-appearance: none; /* Para Firefox */">
+        <option value="1" style="background-color: #1e2a3a; color: white;">1:1</option>
+        <option value="0.5" style="background-color: #1e2a3a; color: white;">1:2</option>
+        <option value="0.33333" style="background-color: #1e2a3a; color: white;">1:3</option>
+        <option value="0.25" style="background-color: #1e2a3a; color: white;">1:4</option>
+        <option value="0.2" style="background-color: #1e2a3a; color: white;">1:5</option>
+        <option value="2" style="background-color: #1e2a3a; color: white;">2:1</option>
+        <option value="3" style="background-color: #1e2a3a; color: white;">3:1</option>
+        <option value="4" style="background-color: #1e2a3a; color: white;">4:1</option>
+        <option value="5" style="background-color: #1e2a3a; color: white;">5:1</option>
+    </select>
+</div>
 
-<div class="flex justify-center mt-[40px] mb-[30px]"><canvas id="canvas" width="1100" style="border: 1px solid #ccc; display: block;"></canvas></div>
+
+<div class="flex justify-center mt-[40px] mb-[30px]"><canvas id="canvas"></canvas></div>
+<div id="scaleMessage" style="display:none; color: white;font-size: 18px;padding: 10px;text-align: center;">
+</div>
+
 <div class="flex justify-center mb-4"><button id="clearButton" class="botton3">Limpiar</button></div>
 
 <div>
@@ -69,35 +87,80 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
 <script>
-    const canvas = new fabric.Canvas('canvas');
-    const imgUrl = "{{ asset('storage/radiographies/'.$radiography->radiography_uri) }}";
-    const img = new Image();
-    img.src = imgUrl;
+const canvas = new fabric.Canvas('canvas');
+const imgUrl = "{{ asset('storage/radiographies/'.$radiography->radiography_uri) }}";
+const img = new Image();
+img.src = imgUrl;
+let imageScaled = false;
 
-    img.onload = function() {
-        const aspectRatio = img.height / img.width;
-        const canvasHeight = 1100 * aspectRatio;
+img.onload = function() {
+    const canvasWidth = img.width;
+    const canvasHeight = img.height;
+
+    function redondearEscala(valor) {
+        const fracciones = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20];
+        let fraccionCercana = null;
+        let diferenciaMinima = null;
+
+        fracciones.forEach(function(fraccion) {
+            const diferencia = Math.abs(valor - fraccion);
+            if (diferenciaMinima === null || diferencia < diferenciaMinima) {
+                diferenciaMinima = diferencia;
+                fraccionCercana = fraccion;
+            }
+        });
+
+        return fraccionCercana;
+    }
+
+    if (canvasWidth > 1100) {
+        const scaleFactor = 1100 / canvasWidth;
+        const newWidth = 1100;
+        const newHeight = canvasHeight * scaleFactor;
+        
+        if (!imageScaled) {
+            const scaleMessage = document.getElementById('scaleMessage');
+            const escalaRedondeada = redondearEscala(1 / scaleFactor);
+            scaleMessage.textContent = `La imagen fue escalada a 1:${escalaRedondeada}`;
+            scaleMessage.style.display = 'block';
+            imageScaled = true;
+        }
+
+        canvas.setWidth(newWidth);
+        canvas.setHeight(newHeight);
+        fabric.Image.fromURL(imgUrl, function(fabricImg) {
+            fabricImg.set({ left: 0, top: 0, selectable: false });
+            fabricImg.scale(scaleFactor);
+            canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas), {
+                scaleX: fabricImg.scaleX,
+                scaleY: fabricImg.scaleY
+            });
+        });
+    } else {
+        canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
 
         fabric.Image.fromURL(imgUrl, function(fabricImg) {
             fabricImg.set({ left: 0, top: 0, selectable: false });
             canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas), {
-                scaleX: 1100 / fabricImg.width,
+                scaleX: canvasWidth / fabricImg.width,
                 scaleY: canvasHeight / fabricImg.height
             });
-        }, {
-            crossOrigin: 'Anonymous'
-        }).catch(function(err) {
-            console.error("Error al cargar la imagen:", err);
         });
-    };
+    }
+};
 
     let measuringArcs = false; 
     let pointsArc = []; 
     let arc;
     let arcText;
     let centerPoint;
+    let scaleFactor = 1;
 
+    document.getElementById('scaleSelect').addEventListener('change', function(e) {
+        scaleFactor = parseFloat(e.target.value);
+        console.log(`Escala seleccionada: 1:${1 / scaleFactor}`);
+    });
     document.getElementById('arco').onclick = function() {
         measuringArcs = !measuringArcs; 
         if (measuringArcs) {
@@ -107,7 +170,6 @@
             console.log("Medición de arcos desactivada.");
         }
     };
-
     canvas.on('mouse:down', function(options) {
         if (!measuringArcs) return; 
 
@@ -152,17 +214,18 @@
         canvas.add(arcPath);
 
         const completeArc = new fabric.Path(`M ${pointArc1.x} ${pointArc1.y} A ${radius} ${radius} 0 0 0 ${pointArc2.x} ${pointArc2.y}`, {
-            strokeWidth: 2,
-            stroke: '#29ff1b',
-            fill: '',
-            selectable: false
+        strokeWidth: 2,
+        stroke: '#29ff1b',
+        fill: '',
+        selectable: false
         });
         canvas.add(completeArc);
 
         const angle = Math.abs((angle2 - angle1) * (180 / Math.PI));
-        const arcLength = Math.abs(radius * (angle * Math.PI / 180));
+        const arcLengthPx = Math.abs(radius * (angle * Math.PI / 180));
+        const arcLengthMm = arcLengthPx * scaleFactor;
 
-        arcText = new fabric.Text(`Longitud: ${Math.round(arcLength)} px`, {
+        arcText = new fabric.Text(`Longitud: ${Math.round(arcLengthMm)} mm`, {
             left: (pointArc1.x + pointArc2.x) / 2,
             top: (pointArc1.y + pointArc2.y) / 2 - 30,
             fontSize: 16,
@@ -171,7 +234,6 @@
         });
         canvas.add(arcText);
     }
-
     document.getElementById('clearButton').onclick = function() {
         canvas.clear();
         resetCanvasImage();
@@ -189,16 +251,30 @@
     };
 
     function resetCanvasImage() {
-        fabric.Image.fromURL(imgUrl, function(fabricImg) {
-            fabricImg.set({ left: 0, top: 0, selectable: false });
-            canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas), {
-                scaleX: 1100 / fabricImg.width,
-                scaleY: canvas.height / fabricImg.height
-            });
-        }, {
-            crossOrigin: 'Anonymous'
+    fabric.Image.fromURL(imgUrl, function(fabricImg) {
+        fabricImg.set({ 
+            left: 0, 
+            top: 0, 
+            selectable: false 
         });
-    }
+
+        let originalScaleFactor = 1; // Establece 1 como predeterminado
+
+        if (img.width > 1100) {
+            originalScaleFactor = 1100 / img.width; // Escalado inicial
+        }
+
+        canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas), {
+            scaleX: originalScaleFactor,
+            scaleY: originalScaleFactor
+        });
+
+        canvas.setWidth(img.width * originalScaleFactor);
+        canvas.setHeight(img.height * originalScaleFactor);
+    }, {
+        crossOrigin: 'Anonymous'
+    });
+}
 
     let measuringDist = false; 
     let pointdist1 = null;
@@ -255,8 +331,10 @@
         });
         canvas.add(line);
 
-        const distance = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-        lineLengthText = new fabric.Text(`Distancia: ${Math.round(distance)} px`, {
+        const distancePx = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+        const distanceMm = distancePx * scaleFactor; // Aplicar el factor de escala
+
+        lineLengthText = new fabric.Text(`Distancia: ${Math.round(distanceMm)} mm`, {
             left: (point1.x + point2.x) / 2,
             top: (point1.y + point2.y) / 2 - 30,
             fontSize: 16,
@@ -334,85 +412,85 @@
         canvas.add(angleText);
     }
 
-let measuringContours = false; 
-let contourPoints = []; 
-let contourLine;
-let contourText;
+    let measuringContours = false; 
+    let contourPoints = []; 
+    let contourLine;
+    let contourText;
 
-document.getElementById('delimited').onclick = function() {
-    measuringContours = !measuringContours; 
-    if (measuringContours) {
-        contourPoints = []; 
-        console.log("Medición de contornos activada.");
-    } else {
-        console.log("Medición de contornos desactivada.");
-    }
-};
+    document.getElementById('delimited').onclick = function() {
+        measuringContours = !measuringContours; 
+        if (measuringContours) {
+            contourPoints = []; 
+            console.log("Medición de contornos activada.");
+        } else {
+            console.log("Medición de contornos desactivada.");
+        }
+    };
 
-canvas.on('mouse:down', function(options) {
-    if (!measuringContours) return; 
+        canvas.on('mouse:down', function(options) {
+        if (!measuringContours) return; 
 
-    const pointer = canvas.getPointer(options.e);
-    contourPoints.push({ x: pointer.x, y: pointer.y });
+        const pointer = canvas.getPointer(options.e);
+        contourPoints.push({ x: pointer.x, y: pointer.y });
 
-    const circle = new fabric.Circle({
-        left: pointer.x - 4,
-        top: pointer.y - 4,
-        radius: 4,
-        fill: '#8607f7',
-        selectable: false
-    });
-    canvas.add(circle);
+        const circle = new fabric.Circle({
+            left: pointer.x - 4,
+            top: pointer.y - 4,
+            radius: 4,
+            fill: '#8607f7',
+            selectable: false
+        });
+        canvas.add(circle);
 
-    drawContour();
-});
-
-function drawContour() {
-    if (contourLine) {
-        canvas.remove(contourLine);
-    }
-
-    if (contourPoints.length < 2) return; 
-
-    const contourPath = contourPoints.map((point, index) => {
-        if (index === 0) return `M ${point.x} ${point.y}`;
-        return `L ${point.x} ${point.y}`;
-    }).join(' ');
-
-    contourLine = new fabric.Path(contourPath, {
-        strokeWidth: 2,
-        stroke: '#8607f7',
-        fill: '',
-        selectable: false
+        drawContour();
     });
 
-    canvas.add(contourLine);
+    function drawContour() {
+        if (contourLine) {
+            canvas.remove(contourLine);
+        }
 
-    const contourLength = calculateContourLength(contourPoints);
-    
-    if (contourText) {
-        canvas.remove(contourText);
+        if (contourPoints.length < 2) return; 
+
+        const contourPath = contourPoints.map((point, index) => {
+            if (index === 0) return `M ${point.x} ${point.y}`;
+            return `L ${point.x} ${point.y}`;
+        }).join(' ');
+
+        contourLine = new fabric.Path(contourPath, {
+            strokeWidth: 2,
+            stroke: '#8607f7',
+            fill: '',
+            selectable: false
+        });
+
+        canvas.add(contourLine);
+
+        const contourLength = calculateContourLength(contourPoints);
+        
+        if (contourText) {
+            canvas.remove(contourText);
+        }
+        contourText = new fabric.Text(`Longitud: ${Math.round(contourLength)} mm`, {
+            left: contourPoints[contourPoints.length - 1].x,
+            top: contourPoints[contourPoints.length - 1].y - 20,
+            fontSize: 16,
+            fill: '#8607f7',
+            selectable: false
+        });
+        canvas.add(contourText);
     }
-    contourText = new fabric.Text(`Longitud: ${Math.round(contourLength)} px`, {
-        left: contourPoints[contourPoints.length - 1].x,
-        top: contourPoints[contourPoints.length - 1].y - 20,
-        fontSize: 16,
-        fill: '#8607f7',
-        selectable: false
-    });
-    canvas.add(contourText);
-}
 
 
-function calculateContourLength(points) {
-    let length = 0;
+    function calculateContourLength(points) {
+    let lengthPx = 0;
     for (let i = 1; i < points.length; i++) {
         const dx = points[i].x - points[i - 1].x;
         const dy = points[i].y - points[i - 1].y;
-        length += Math.sqrt(dx * dx + dy * dy);
+        lengthPx += Math.sqrt(dx * dx + dy * dy);
     }
-    return length;
-}
+    return lengthPx * scaleFactor; // Convertir a mm
+    }
 
     function calculateAngle(pointA, pointB, pointC) {
         const ab = Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
@@ -469,7 +547,6 @@ canvas.on('mouse:up', function() {
     }
 });
 
-// Cambiar el cursor del canvas
 canvas.setCursor('crosshair');
 
 const downloadImageButton = document.getElementById('downloadImage');
@@ -485,26 +562,20 @@ downloadImageButton.addEventListener('click', () => {
 });
 
 document.querySelector('form').addEventListener('submit', function(event) {
-    // Exportar el contenido actual del lienzo de fabric.js a una imagen
     const dataURL = canvas.toDataURL({
         format: 'png',
         quality: 1.0,
     });
-
-    // Establecer la imagen del canvas en el campo oculto
     document.getElementById('canvasData').value = dataURL;
-
-    console.log(dataURL); // Verifica que se esté generando correctamente
+    console.log(dataURL);
 });
 
 document.getElementById('save').onclick = function(event) {
-    event.preventDefault(); // Evita que el formulario se envíe automáticamente
+    event.preventDefault();
 
-    // Convierte el contenido del canvas en una imagen base64
     const dataURL = canvas.toDataURL('image/png');
 
-    // Envía la imagen al servidor
-    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id,'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}", {
+    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id,'tomography_id' =>'0', 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -527,5 +598,6 @@ document.getElementById('save').onclick = function(event) {
 document.getElementById('updateButton').addEventListener('click', function () {
     location.reload();
 });
+
 </script>
 @endsection

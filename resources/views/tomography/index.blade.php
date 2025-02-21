@@ -4,7 +4,15 @@
     {{ __('Tomografias') }}
 @endsection
 @section('content')
-<div class="flex justify-end"><a href="{{route('tomography.create')}}" class="botton1">Crear Tomografia</a></div>
+<div class="grid grid-cols-2" >
+    <div><form method="POST" action="{{ route('tomography.search') }}">
+        @csrf
+        <input type="text" placeholder="Buscar" name="search" style="color: #333; font-size: 16px;  padding: 10px 15px; border-radius: 20px; margin-top: 5px; margin-left: 5px;"/>
+        <input class="botton4" type="submit" value="Buscar"/>
+    </form></div>
+    <div class="flex justify-end"><a href="{{route('tomography.create')}}" class="botton1">Crear Tomografia</a></div>
+</div>
+<h1 class="txt-title1">TOMOGRAFIAS</h1>
     <div class="grid grid-cols-5 gap-4 border-b border-cyan-500">
         <h3 class="txt-head">Nombre del paciente</h3>  
         <h3 class="txt-head">Carnet de Identidad</h3>

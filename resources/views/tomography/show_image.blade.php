@@ -58,7 +58,6 @@
         <div id="magnifierLens" style="display: none; position: absolute; border: 1px solid #000; border-radius: 50%; pointer-events: none;"></div>
     </div>
 </div>
-
 <canvas id="imageCanvas" style="display: none;"></canvas>
 
 <script>

@@ -17,10 +17,6 @@
         <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Alejar</span></div>
     </div>
     <div class="group relative">
-        <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/filter.png') }}" width="50" height="50"></button>
-        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Editar</span></div>
-    </div>
-    <div class="group relative">
         <button id="draw" class="btnimg" onclick="window.location.href='{{ route('tool.measurements', $tool->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
     </div>
@@ -28,11 +24,18 @@
         <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
+    <div class="group relative">
+        <button id="downloadImage" class="btnimg"><img src="{{ asset('assets/images/download.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Decargar</span></div>
+    </div>
 </div>
-<div class="relative flex justify-center mt-[10px] mb-[20px]">
-    <div class="overflow-auto" style="width: 1100px; height: 800px; position: relative;">
-       <img id="radiographyImage" src="{{ asset('storage/tools/'.$tool->tool_uri) }}" style="max-width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
-   </div>
+<div class="relative flex justify-center mt-[50px] mb-[30px]">
+    <div class="overflow-auto" style="width: 1100px; height: 700px; position: relative;">
+        <img id="radiographyImage" 
+             src="{{ asset('storage/tools/'.$tool->tool_uri) }}" 
+             style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+        <div id="magnifierLens" style="display: none; position: absolute; border: 1px solid #000; border-radius: 50%; pointer-events: none;"></div> <!-- Lente de la lupa -->
+    </div>
 </div>
 
 <div class="flex ml-10"><h1 class="txt-title2">Datos del Paciente:</h1></div>
@@ -157,5 +160,18 @@
             img.style.top = initialPosition.top;
         }
     });
+    //Descarga
+    const downloadButton = document.getElementById('downloadImage');
+    const radiographyImage = document.getElementById('radiographyImage');
+
+    downloadButton.addEventListener('click', () => {
+        const imageUrl = radiographyImage.src;
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = 'imagen_paciente.png'; // Nombre sugerido para el archivo
+        link.click();
+        link.remove();
+    });
+
 </script>
 @endsection

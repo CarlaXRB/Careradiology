@@ -12,7 +12,7 @@
             line-height: 1.6;
         }
         h1, h2, h3 {
-            color: #004d40; /* Verde petróleo oscuro */
+            color: #004d40;
         }
         h1 {
             text-align: center;
@@ -78,7 +78,7 @@
     </div>
 
     <div class="section">
-        <h2>Información de la radiografía</h2>
+        <h2>Información del estudio</h2>
         <p><b>ID de la radiografía:</b> {{ $data['radiography_id'] }}</p>
         <p><b>Fecha del estudio:</b> {{ $data['radiography_date'] }}</p>
         <p><b>Tipo de estudio:</b> {{ $data['radiography_type'] }}</p>

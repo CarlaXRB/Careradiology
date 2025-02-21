@@ -60,7 +60,6 @@
 </div>
 
 <script>
-    // Redirigir al hacer clic en el botón de superposición
     document.getElementById('overlayButton').onclick = function() {
         window.location.href = "{{ route('tomography.superposicion', ['id' => $tomography->id]) }}"; // Redirige a la ruta de superposición
     };

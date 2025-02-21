@@ -27,9 +27,9 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
 </div>
-<div class="flex justify-center mt-[30px] mb-[30px]"><img src="{{ asset('storage/radiographies/'.$radiography->radiography_uri)}}" width="1000"/></div>
+<div class="flex justify-center mt-[30px] mb-[30px]"><img src="{{ asset('storage/radiographies/'.$radiography->radiography_uri)}}"/></div>
     <div class="flex justify-center mb-4">
-    <div class="mt-2"><a href="{{ route('radiography.tool', $radiography->id) }}" class="botton2">Herramientas</a></div>
+        <div class="mt-2"><a href="{{ route('radiography.tool', $radiography->id) }}" class="botton2">Herramientas</a></div>
     </div>
 </div>
 @endsection

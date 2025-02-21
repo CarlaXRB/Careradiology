@@ -28,15 +28,23 @@
         </div>
         <h1 class="flex justify-center text-red-500 mt-5 ml-10 mb-5">Paciente no registrado en la base de datos.</h1>
         @endif
-        <h1 class="txt-title2">Datos de la Radiografia:</h1>
+        <h1 class="txt-title2">Datos del estudio:</h1>
         <div class="grid grid-cols-2 gap-4 text-gray-900 dark:text-white">
+        @if(isset($tool->tool_radiography_id) && $tool->tool_radiography_id > 0)
             <h3 class="txt2">ID Radiografia:</h3><p>{{ $tool->radiography->radiography_id}} </p>
             <h3 class="txt2">Fecha de la radiografia:</h3><p>{{ $tool->radiography->radiography_date }} </p>
             <h3 class="txt2">Tipo de radiografia:</h3><p>{{ $tool->radiography->radiography_type }} </p>
             <h3 class="txt2">Doctor que solicito el estudio:</h3><p>{{ $tool->radiography->radiography_doctor }} </p>
             <h3 class="txt2">Radiologo:</h3><p>{{ $tool->radiography->radiography_charge }} </p>
+            @else
+            <h3 class="txt2">ID Tomografia:</h3><p>{{ $tool->tomography->tomography_id}} </p>
+            <h3 class="txt2">Fecha de la tomografia:</h3><p>{{ $tool->tomography->tomography_date }} </p>
+            <h3 class="txt2">Tipo de tomografia:</h3><p>{{ $tool->tomography->tomography_type }} </p>
+            <h3 class="txt2">Doctor que solicito el estudio:</h3><p>{{ $tool->tomography->tomography_doctor }} </p>
+            <h3 class="txt2">Radiologo:</h3><p>{{ $tool->tomography->tomography_charge }} </p>
+            @endif
         </div>
-        <h1 class="txt-title2">Observaciones de la Radiografia:</h1>
+        <h1 class="txt-title2">Observaciones del estudio:</h1>
 
         <div class="flex justify-center mb-4">
             <button id="showImageBtn" type="button" class="botton3">Mostrar Imagen</button>

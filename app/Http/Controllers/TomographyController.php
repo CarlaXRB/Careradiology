@@ -212,4 +212,11 @@ class TomographyController extends Controller
         }
         return view('tomography.superposicion', compact('tomography', 'images'));
     }
+    public function search(Request $request) {
+        $search = $request->input('search');
+        $tomographies = Tomography::where('name_patient', 'LIKE', '%' . $search . '%')
+                ->orWhere('radiography_id', 'LIKE', '%' . $search . '%')
+                ->orWhere('ci_patient', 'LIKE', '%' . $search . '%')->get();
+        return view('tomography.search', compact('tomographies'));
+    }
 }

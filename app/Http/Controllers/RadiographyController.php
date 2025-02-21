@@ -46,7 +46,7 @@ class RadiographyController extends Controller
         $imagick = new Imagick();
         $imagick->readImage($dicomPath);
         $imagick->setImageFormat('jpg');
-
+        $imagick->setImageCompressionQuality(95);
         $jpgFileName = time() . '.jpg';
         $jpgFilePath = storage_path('app/public/radiographies/' . $jpgFileName);
         $imagick->writeImage($jpgFilePath);

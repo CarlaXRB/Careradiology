@@ -37,7 +37,7 @@
         <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/edge.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Bordes</span></div>
     </div>
-    <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
+    <form id="saveImageForm" action="{{ route('tool.store',['radiography_id' => $radiography->radiography_id, 'tomography_id' => 0,'ci_patient' => $radiography->ci_patient, 'id' => $radiography->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
@@ -58,12 +58,13 @@
     <div class="overflow-auto" style="width: 1100px; height: 700px; position: relative;">
         <img id="radiographyImage" 
              src="{{ asset('storage/radiographies/'.$radiography->radiography_uri) }}" 
-             style="width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+             style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
         <div id="magnifierLens" style="display: none; position: absolute; border: 1px solid #000; border-radius: 50%; pointer-events: none;"></div> <!-- Lente de la lupa -->
     </div>
 </div>
+
 <div>
-    <h1 class="txt-title2">CONTINUA EDITANDO</h1>
+    <h1 class="txt-title2">HERRAMIENTAS APLICADAS</h1>
     <div class="flex justify-end"><a href="javascript:void(0);" class="botton3" id="updateButton">Actualizar</a></div>
     <div class="grid grid-cols-4 gap-4 border-b border-cyan-500">
         <h3 class="txt-head">Vista previa</h3>  
@@ -306,7 +307,7 @@
 
     const dataURL = canvas.toDataURL('image/png');
 
-    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id, 'ci_patient' => $radiography->ci_patient,'id' => $radiography->id]) }}", {
+    fetch("{{ route('tool.store', ['radiography_id' => $radiography->radiography_id,'tomography_id' => 0, 'ci_patient' => $radiography->ci_patient,'id' => $radiography->id]) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
