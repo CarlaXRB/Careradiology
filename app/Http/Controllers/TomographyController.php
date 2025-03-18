@@ -21,6 +21,9 @@ class TomographyController extends Controller
         $tomographies = tomography::get();
         return view('tomography.index', compact('tomographies'));
     }
+    public function new():View{
+        return view('tomography.newtomography');
+    }
     public function create():View{
         return view('tomography.create');
     }
@@ -195,7 +198,7 @@ class TomographyController extends Controller
             'conclusions' => request('conclusions'),
         ];
         $pdf = Pdf::loadView('tomography.pdfreport', ['data'=>$data]);
-        return $pdf->download('tomography_report.pdf');
+        return $pdf->download($tomography->name_patient. "_" . $tomography->ci_patient . "_" .$tomography->tomography_id . '_reporte.pdf');
     }    
     public function superposicion($id){
         $tomography = Tomography::findOrFail($id);

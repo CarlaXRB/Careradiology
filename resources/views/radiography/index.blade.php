@@ -10,7 +10,7 @@
         <input type="text" placeholder="Buscar" name="search" style="color: #333; font-size: 16px;  padding: 10px 15px; border-radius: 20px; margin-top: 5px; margin-left: 5px;"/>
         <input class="botton4" type="submit" value="Buscar"/>
     </form></div>
-    <div class="flex justify-end"><a href="{{route('radiography.create')}}" class="botton1">Crear Radiografia</a></div>
+    <div class="flex justify-end"><a href="{{ route('dashboard') }}" class="botton1">Inicio</a></div>
 </div>
 <h1 class="txt-title1">RADIOGRAFIAS</h1>
     <div class="grid grid-cols-6 gap-4 border-b border-cyan-500 mb-3">

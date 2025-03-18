@@ -279,9 +279,10 @@
 
         ctx.filter = img.style.filter;
         ctx.drawImage(img, 0, 0);
-
+        const ci_patient = "{{ $radiography->ci_patient }}"; 
+        const radiography_id = "{{ $radiography->radiography_id }}"; 
         const link = document.createElement('a');
-        link.download = `radiography_{{ $radiography->id }}_${new Date().toISOString().slice(0, 10)}.png`;
+        link.download = `filtros_${radiography_id}_${ci_patient}_${new Date().toISOString().slice(0, 10)}.png`;
         link.href = canvas.toDataURL();
         link.click();
     });

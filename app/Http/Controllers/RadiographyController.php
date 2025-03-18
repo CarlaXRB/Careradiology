@@ -25,6 +25,9 @@ class RadiographyController extends Controller
         $radiographies = Radiography::get();
         return view('radiography.index', compact('radiographies'));
     }
+    public function new():View{
+        return view('radiography.newradiography');
+    }
     public function create():View{
         return view('radiography.create');
     }
@@ -97,7 +100,7 @@ class RadiographyController extends Controller
             'conclusions' => request('conclusions'),
         ];
         $pdf = Pdf::loadView('radiography.pdfreport', ['data'=>$data]);
-        return $pdf->download('study_report.pdf');
+        return $pdf->download($radiography->name_patient. "_" . $radiography->ci_patient . "_" .$radiography->radiography_id . '_reporte.pdf');
     }
     public function search(Request $request) {
         $search = $request->input('search');

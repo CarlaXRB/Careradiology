@@ -41,10 +41,6 @@
         <button id="downloadImage" class="btnimg"><img src="{{ asset('assets/images/download.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Decargar</span></div>
     </div>
-    <div class="group relative">
-        <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
-        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
-    </div>
 </div>
 <div class="flex justify-end mb-4">
     <label for="scaleSelect" class="mr-3 text-white" style="font-size: 18px; margin-top: 8px;">Escala:</label>
@@ -529,7 +525,10 @@ downloadImageButton.addEventListener('click', () => {
         quality: 1.0,
     });
     const link = document.createElement('a');
-    link.download = `study_{{ $tool->id }}_${new Date().toISOString().slice(0, 10)}.png`;
+    const ci_patient = "{{ $tool->ci_patient }}";  
+    const tomography_id = "{{ $tool->tool_tomography_id }}"; 
+    const radiography_id = "{{ $tool->tool_radiography_id }}"; 
+    link.download = `mediciones_${radiography_id}_${tomography_id}_${ci_patient}_${new Date().toISOString().slice(0, 10)}.png`;
     link.href = dataURL;
     link.click();
 });

@@ -57,7 +57,7 @@
         thumbnailContainer.appendChild(imageContainer);
     });
 
-    let selectedIndexes = [0];  // Marcar la primera imagen como seleccionada
+    let selectedIndexes = [0]; 
     let autoOverlay = false;
 
     document.getElementById('autoOverlayButton').onclick = function() {

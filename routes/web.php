@@ -7,9 +7,8 @@ use App\Http\Controllers\TomographyController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SuscribeController;
 use App\Http\Controllers\ToolController;
-use App\Http\Controllers\DicomController;
 use App\Http\Controllers\AdminUserController;
-use App\Models\Tomography;
+use App\Http\Controllers\DicomController;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -23,6 +22,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('admin/users/list', [AdminUserController::class, 'index'])->name('admin.users');
     Route::delete('/admin/destroy/{user}', [AdminUserController::class, 'destroy'])->name('admin.destroy');
 
+    Route::get('/new-radiography',[RadiographyController::class,'new'])->name('radiography.new');
     Route::get('/radiography',[RadiographyController::class,'index'])->name('radiography.index');
     Route::get('/radiography/create',[RadiographyController::class,'create'])->name('radiography.create');
     Route::post('/radiography/store',[RadiographyController::class,'store'])->name('radiography.store');
@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/radiography/{radiography}/apply-filters', [RadiographyController::class, 'applyFilters'])->name('radiography.applyFilters');
     Route::post('/radiography/search',[RadiographyController::class, 'search'])->name('radiography.search');
 
+    Route::get('/new-tomography',[TomographyController::class,'new'])->name('tomography.new');
     Route::get('/tomography',[TomographyController::class,'index'])->name('tomography.index');
     Route::get('/tomography/create',[TomographyController::class,'create'])->name('tomography.create');
     Route::post('/tomography/store',[TomographyController::class,'store'])->name('tomography.store');
@@ -59,6 +60,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tool/measurements/{id}',[ToolController::class,'measurements'])->name('tool.measurements');
     Route::get('/tool/report/{tool}',[ToolController::class,'report'])->name('tool.report');
     Route::post('/tool/{tool}/pdfreport', [ToolController::class, 'pdfreport'])->name('tool.pdfreport');
+  
+    Route::get('/dicom/upload', [DicomController::class, 'uploadForm'])->name('dicom.upload');
+    Route::post('/dicom/process', [DicomController::class, 'processDicom'])->name('process.dicom');
+    Route::post('/dicom/process-folder', [DicomController::class, 'processFolder'])->name('process.folder');
+    Route::get('/dicom/show-images/{folderName}', [DicomController::class, 'showFolderImages'])->name('dicom.showFolderImages');
+    Route::get('/dicom-form', [DicomController::class, 'showForm'])->name('dicom.data');
+    Route::post('/dicom-upload', [DicomController::class, 'uploadDicom'])->name('dicom.updata');
+    Route::get('/dicom-records', [DicomController::class, 'showRecords']);
 
 });
 

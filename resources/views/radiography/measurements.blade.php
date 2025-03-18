@@ -555,8 +555,10 @@ downloadImageButton.addEventListener('click', () => {
         format: 'png',
         quality: 1.0,
     });
+    const ci_patient = "{{ $radiography->ci_patient }}"; 
+    const radiography_id = "{{ $radiography->radiography_id }}"; 
     const link = document.createElement('a');
-    link.download = `radiography_{{ $radiography->id }}_${new Date().toISOString().slice(0, 10)}.png`;
+    link.download = `mediciones_${radiography_id}_${ci_patient}_${new Date().toISOString().slice(0, 10)}.png`;
     link.href = dataURL;
     link.click();
 });

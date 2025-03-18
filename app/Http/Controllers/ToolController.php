@@ -155,7 +155,7 @@ class ToolController extends Controller
     } else {
         return back()->with('error', 'No hay datos de radiografía ni de tomografía disponibles.');
     }
-    return $pdf->download('study_report.pdf');
+    return $pdf->download($tool->patient->name_patient . "_" . $tool->patient->ci_patient . "_" .$tool->tool_radiography_id .$tool->tool_tomography_id . '_reporte.pdf');
     }
     public function search($id){
         $tool = Tool::find($id);

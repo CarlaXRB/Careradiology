@@ -272,7 +272,9 @@
         ctx.drawImage(img, 0, 0);
 
         const link = document.createElement('a');
-        link.download = `tomography_{{ $tool->id }}_${new Date().toISOString().slice(0, 10)}.png`;
+        const ci_patient = "{{ $tool->ci_patient }}";  
+        const tomography_id = "{{ $tool->tool_tomography_id }}"; 
+        link.download = `filtros_${tomography_id}_${ci_patient}_${new Date().toISOString().slice(0, 10)}.png`;
         link.href = canvas.toDataURL();
         link.click();
     });
