@@ -9,6 +9,7 @@ use App\Http\Controllers\SuscribeController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DicomController;
+use App\Http\Controllers\DicomOrthancController;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -67,19 +68,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dicom/show-images/{folderName}', [DicomController::class, 'showFolderImages'])->name('dicom.showFolderImages');
     Route::get('/dicom-form', [DicomController::class, 'showForm'])->name('dicom.data');
     Route::post('/dicom-upload', [DicomController::class, 'uploadDicom'])->name('dicom.updata');
-    Route::get('/dicom-records', [DicomController::class, 'showRecords']);
+    Route::get('/dicom-records', [DicomController::class, 'showRecords'])->name('dicom.viewdata');
+
+    Route::get('/view-dicom/studies', [DicomOrthancController::class, 'index'])->name('orthanc.index');
+    Route::get('/view-dicom/study/{studyId}', [DicomOrthancController::class, 'show'])->name('orthanc.show');
+
+    Route::get('/dicomo/studies', [DicomOrthancController::class, 'getStudies']);
+    Route::get('/dicomo/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances']);
+    Route::get('/dicomo/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile']);
 
 });
 
 Route::get('/mailme', [SuscribeController::class, 'mailMe'])->name('mailMe');
 
 Route::get('/dicom', function () {return view('dicom');})->name('dicom');
-
-
-
-
-
-
-
-
-
