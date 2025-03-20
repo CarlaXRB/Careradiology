@@ -13,7 +13,7 @@
 
 <h3 class="txt-title2">SELECCIONAR FORMATO</h3>
 <div class="flex flex-wrap" style="margin-left: 65px;">
-    <a href="{{ route('dicom.upload') }}" class="card1">
+    <a href="{{ route('dicom.uploadTomography') }}" class="card1">
         <img class="img-fluid mx-auto" src="{{ asset('assets/images/ct1.png') }}" width="150" height="150" alt="DICOM">
         <h5 class="mt-3"> CARPETA DICOM</h5>
         <p>Selecciona una carpeta que contenga múltiples archivos DICOM con metadatos</p>
@@ -35,6 +35,6 @@
     </a>
 </div>
 <div class="flex justify-center" style="margin-bottom: 25px">
-    <a href="{{ route('dashboard') }}" class="botton2">Conexión al equipo</a>
+    <a href="{{ route('orthanc.studies') }}" class="botton2">Conexión al equipo</a>
 </div>
 @endsection

@@ -62,7 +62,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tool/report/{tool}',[ToolController::class,'report'])->name('tool.report');
     Route::post('/tool/{tool}/pdfreport', [ToolController::class, 'pdfreport'])->name('tool.pdfreport');
   
-    Route::get('/dicom/upload', [DicomController::class, 'uploadForm'])->name('dicom.upload');
+    Route::get('/dicom/upload-radiography', [DicomController::class, 'uploadFormRadiography'])->name('dicom.uploadRadiography');
+    Route::get('/dicom/upload-tomography', [DicomController::class, 'uploadFormTomography'])->name('dicom.uploadTomography');
     Route::post('/dicom/process', [DicomController::class, 'processDicom'])->name('process.dicom');
     Route::post('/dicom/process-folder', [DicomController::class, 'processFolder'])->name('process.folder');
     Route::get('/dicom/show-images/{folderName}', [DicomController::class, 'showFolderImages'])->name('dicom.showFolderImages');
@@ -73,9 +74,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/view-dicom/studies', [DicomOrthancController::class, 'index'])->name('orthanc.index');
     Route::get('/view-dicom/study/{studyId}', [DicomOrthancController::class, 'show'])->name('orthanc.show');
 
-    Route::get('/dicomo/studies', [DicomOrthancController::class, 'getStudies']);
-    Route::get('/dicomo/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances']);
-    Route::get('/dicomo/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile']);
+    Route::get('/dicomor/studies', [DicomOrthancController::class, 'getStudies'])->name('orthanc.studies');
+    Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');;
+    Route::get('/dicomor/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile'])->name('orthanc.file');
 
 });
 

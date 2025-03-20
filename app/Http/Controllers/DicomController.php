@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class DicomController extends Controller
 {
-    public function uploadForm()
+    public function uploadFormRadiography()
     {
-        return view('dicom.upload');
+        return view('dicom.uploadRadiography');
+    }
+    public function uploadFormTomography()
+    {
+        return view('dicom.uploadTomography');
     }
 
     public function processDicom(Request $request)

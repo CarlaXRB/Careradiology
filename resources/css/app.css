@@ -365,7 +365,7 @@ footer{
     padding: 5px;
 }
 .card1:hover{
-    border: 8px solid var(--secundary-color);
+    border: 5px solid var(--secundary-color);
 }
 /*ENDCOMUN*/
 

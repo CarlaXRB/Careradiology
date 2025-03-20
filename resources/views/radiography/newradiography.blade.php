@@ -1,11 +1,8 @@
 @extends('layouts._partials.layout')
-
 @section('title','Create Radiography')
-
 @section('subtitle')
     {{ __('Radiografías') }}
 @endsection
-
 @section('content')
 <div class="flex justify-end">
     <a href="{{ route('dashboard') }}" class="botton1">Inicio</a>
@@ -13,7 +10,7 @@
 
 <h3 class="txt-title2">SELECCIONAR FORMATO</h3>
 <div class="flex flex-wrap" style="margin-left: 65px;">
-    <a href="{{ route('dicom.upload') }}" class="card1">
+    <a href="{{ route('dicom.uploadRadiography') }}" class="card1">
         <img class="img-fluid mx-auto" src="{{ asset('assets/images/radiography1.png') }}" width="150" height="150" alt="DICOM">
         <h5 class="mt-3">DICOM</h5>
         <p>Formato estándar para imágenes médicas. Contiene información del paciente y del equipo</p>
@@ -36,6 +33,6 @@
 </div>
 
 <div class="flex justify-center" style="margin-bottom: 25px">
-    <a href="{{ route('dashboard') }}" class="botton2">Conexión al equipo</a>
+    <a href="{{ route('orthanc.index') }}" class="botton2">Conexión al equipo</a>
 </div>
 @endsection
