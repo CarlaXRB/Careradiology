@@ -1,33 +1,36 @@
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imágenes Procesadas</title>
-</head>
-<body>
-    <h1>Imágenes Procesadas</h1>
-    <div>
-        @foreach ($images as $image)
-            <img src="{{ asset($image) }}" alt="Imagen DICOM procesada" style="max-width: 100%; max-height: 500px; margin-bottom: 20px;">
+@extends('layouts._partials.layout')
+@section('title', 'Imágenes Procesadas DICOM')
+@section('subtitle')
+    {{ __('Visualización de Imágenes DICOM') }}
+@endsection
+@section('content')
+@if ($dicomRecord)
+    <div class="ml-10 mt-8">
+        <h2 class="txt-title2 mb-2">Paciente:</h2>
+        <div><h3>Nombre:</h3><p>{{ $dicomRecord->patient_name }}</p></div>
+        <div><h3>ID: </h3><p>{{ $dicomRecord->patient_id }}</p></div>
+        <div><h3>Modalidad:</h3><p>{{ $dicomRecord->modality }}</p></div>
+        <div><h3>Fecha del Estudio:</h3><p>{{ $dicomRecord->study_date }}</p></div>
+        <div><h3>Tamaño Imagen:</h3><p>{{ $dicomRecord->rows }} x {{ $dicomRecord->columns }}</p></div>
+    </div>
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center mb-5">
+    @foreach ($images as $image)
+        <div>
+            <img src="{{ asset($image) }}" alt="Imagen DICOM procesada" class="max-w-full max-h-[500px] mb-2 rounded-md" />
+        </div>
+    @endforeach
+    </div>
+    <div class="ml-10 mt-8 mb-6">
+        <div><h3 class="txt2">Metadatos completos:</h3></div>
+        @php
+            $metadata = json_decode($dicomRecord->metadata, true);
+        @endphp
+        @foreach ($metadata as $key => $value)
+            <p>{{ ucfirst(str_replace('_', ' ', $key)) }}: {{ is_array($value) ? json_encode($value) : $value }}</p>
         @endforeach
     </div>
+@else
+    <p class="ml-10 text-lg">No se encontraron datos del paciente para esta carpeta.</p>
+@endif
+@endsection
 
-    @if ($dicomRecord)
-        <h2>Información del Paciente</h2>
-        <p><strong>Nombre:</strong> {{ $dicomRecord->patient_name }}</p>
-        <p><strong>ID del Paciente:</strong> {{ $dicomRecord->patient_id }}</p>
-        <p><strong>Modalidad:</strong> {{ $dicomRecord->modality }}</p>
-        <p><strong>Fecha del Estudio:</strong> {{ $dicomRecord->study_date }}</p>
-        <p><strong>Tamaño de la Imagen:</strong> {{ $dicomRecord->rows }} x {{ $dicomRecord->columns }}</p>
-
-        <h3>Metadatos completos:</h3>
-        <pre>
-            {{ json_encode(json_decode($dicomRecord->metadata), JSON_PRETTY_PRINT) }}
-        </pre>
-    @else
-        <p>No se encontraron datos del paciente para esta carpeta.</p>
-    @endif
-</body>
-</html>

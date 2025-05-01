@@ -18,7 +18,7 @@
         <h5 class="mt-3"> CARPETA DICOM</h5>
         <p>Selecciona una carpeta que contenga múltiples archivos DICOM con metadatos</p>
     </a>
-    <a href="{{ route('tomography.create') }}" class="card1">
+    <a href="{{ route('tomography.createdcm') }}" class="card1">
         <img class="img-fluid mx-auto" src="{{ asset('assets/images/ct2.png') }}" width="150" height="150" alt=".dcm">
         <h5 class="mt-3">CARPETA .dcm</h5>
         <p>Selecciona una carpeta con archivos .dcm </p>

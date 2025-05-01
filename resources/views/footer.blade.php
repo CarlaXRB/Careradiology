@@ -18,15 +18,17 @@
             </div>
             <div class="footer-card">
                 <h5>Muy Pronto</h5>
-                <p>¡Nuevos sistemas salinatarios! Estamos comprometidos con el cuidado de la salud.</p>
+                <p>¡Nuevos sistemas sanitarios! Estamos comprometidos con el cuidado de la salud, contribuyendo con el desarrollando continuo de soluciones innovadoras.</p>
             </div>
             <div class="footer-card">
                 <h5>¿Ineteresado?</h5>
                 <p>¡Escribenos un correo electrónico!</p>
                 <p>careradiologyproject@gmail.com</p>
+                <p>Redes sociales:</p>
+                <p>CodeByXC</p>
             </div>
         </div>
         <div class="copyright">
-            <p>2024 Todos los servicios reservados. Desarrollado por CodeByXC</p>
+            <p>2024 Todos los servicios reservados. Desarrollado por Carla Ximena Rendon Blanco</p>
         </div>
     </footer>

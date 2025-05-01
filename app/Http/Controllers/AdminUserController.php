@@ -24,13 +24,14 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'rol' => 'required|string|in:user,doctor,recepcionist,radiology,admin',
         ]);
 
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'user',
+            'role' => $validated['rol'],
         ]);
         return redirect()->route('admin.users')->with('success', 'Usuario creado exitosamente');
     }

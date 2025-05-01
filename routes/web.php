@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RadiographyController;
 use App\Http\Controllers\TomographyController;
 use App\Http\Controllers\PatientController;
@@ -10,11 +10,28 @@ use App\Http\Controllers\ToolController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DicomOrthancController;
+use App\Http\Controllers\EventController;
 
 Route::get('/', function () {return view('welcome');});
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard');})->name('dashboard'); 
+    //Route::get('/dashboard', function () { return view('dashboard');})->name('dashboard'); 
+    Route::get('/dashboard', function () { 
+        $user = Auth::user();
+    
+        if ($user->role === 'doctor') {
+            return view('dashboard.doctor');
+        } elseif ($user->role === 'recepcionist') {
+            return view('dashboard.recepcionist');
+        } elseif ($user->role === 'admin') {
+            return view('dashboard.admin');
+        } elseif ($user->role === 'radiology') {
+            return view('dashboard.radiology');
+        } else {
+            return view('dashboard.user');
+        }
+    })->name('dashboard');
+    
     Route::resource('/patient',PatientController::class);
     Route::post('/search',[PatientController::class, 'search'])->name('patient.search');
 
@@ -48,6 +65,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('tomography/image/{tomographyId}/{image}', [TomographyController::class, 'showSelectedImage'])->name('tomography.image');
     Route::get('/tomography/superposicion/{id}', [TomographyController::class, 'superposicion'])->name('tomography.superposicion');
     Route::post('/tomography/search',[TomographyController::class, 'search'])->name('tomography.search');
+    Route::get('/tomography/dcm/create', [TomographyController::class, 'createdcm'])->name('tomography.createdcm');
+    Route::post('/tomography/dcm/store', [TomographyController::class, 'storedcm'])->name('tomography.storedcm');
 
     Route::get('/tool',[ToolController::class,'index'])->name('tool.index');
     Route::post('/tool/new/tool/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'new'])->name('tool.new');
@@ -71,13 +90,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/dicom-upload', [DicomController::class, 'uploadDicom'])->name('dicom.updata');
     Route::get('/dicom-records', [DicomController::class, 'showRecords'])->name('dicom.viewdata');
 
+    Route::get('/calendar', [EventController::class, 'calendar'])->name('events.index');
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
+    Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+
     Route::get('/view-dicom/studies', [DicomOrthancController::class, 'index'])->name('orthanc.index');
     Route::get('/view-dicom/study/{studyId}', [DicomOrthancController::class, 'show'])->name('orthanc.show');
 
     Route::get('/dicomor/studies', [DicomOrthancController::class, 'getStudies'])->name('orthanc.studies');
-    Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');;
+    Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');
     Route::get('/dicomor/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile'])->name('orthanc.file');
-
 });
 
 Route::get('/mailme', [SuscribeController::class, 'mailMe'])->name('mailMe');

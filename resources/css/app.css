@@ -9,7 +9,7 @@
     --light-color: #fff;
     --gray-color:#292c28;
     --green-color: rgb(50, 172, 50);
-    --greenh-color:rgb(3, 197, 3);
+    --greenh-color:#03c503;
     --purple-color:#5b14ab;
     --purpleh-color:#7b31cf;
     --blue-color:#0066ff;
@@ -90,6 +90,20 @@
     margin-bottom:40px;
     padding: 20px;
     border: 2px solid var(--secundary-color);
+    border-radius: 20px;
+    max-width: 230px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.card2{
+    color: var(--light-color);
+    margin: 20px;
+    margin-bottom:40px;
+    padding: 20px;
+    border: 3px solid var(--purpleh-color);
     border-radius: 20px;
     max-width: 230px;
     display: flex;
@@ -224,6 +238,14 @@ footer{
 }
 .txt-title2{
     color:var(--purpleh-color);
+    font-weight: bold;
+    font-size: 28px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+.txt-title3{
+    color: rgb(20, 245, 0);
     font-weight: bold;
     font-size: 28px;
     text-align: center;
@@ -366,6 +388,9 @@ footer{
 }
 .card1:hover{
     border: 5px solid var(--secundary-color);
+}
+.card2:hover{
+    border: 5px solid var(--purple-color);
 }
 /*ENDCOMUN*/
 

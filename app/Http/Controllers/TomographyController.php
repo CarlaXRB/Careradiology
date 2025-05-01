@@ -71,6 +71,40 @@ class TomographyController extends Controller
     
         return redirect()->route('tomography.convert', ['id' => $tomography->id]);
     }
+
+    public function createdcm(): View {
+        return view('tomography.createdcm');
+    }
+    
+    public function storedcm(Request $request): RedirectResponse {
+        $request->validate([
+            'tomography_folder.*' => 'required|file|mimes:dcm',
+        ]);
+        
+        $timestamp = time();
+        $folderName = "dcm_upload_{$timestamp}";
+        $destinationPath = storage_path("app/public/tomographies/images/{$folderName}");
+        if (!File::exists($destinationPath)) {
+            File::makeDirectory($destinationPath, 0777, true);
+        }
+        foreach ($request->file('tomography_folder') as $index => $file) {
+            $fileName = $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+        }
+        $tomography = new Tomography();
+        $tomography->name_patient = $request->name_patient;
+        $tomography->ci_patient = $request->ci_patient;
+        $tomography->tomography_id = $request->tomography_id;
+        $tomography->tomography_date = $request->tomography_date;
+        $tomography->tomography_type = $request->tomography_type;
+        $tomography->tomography_dicom_uri = "tomographies/images/{$folderName}";
+        $tomography->tomography_uri = 'new';
+        $tomography->tomography_doctor = $request->tomography_doctor;
+        $tomography->tomography_charge = $request->tomography_charge;
+        $tomography->save();
+        return redirect()->route('tomography.convert', ['id' => $tomography->id]);
+    }
+
     public function convert($id){
         $tomography = Tomography::find($id);
         if (!$tomography) {
