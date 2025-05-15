@@ -4,7 +4,7 @@
     {{ __('Ver Radiografia') }}
 @endsection
 @section('content')
-<div class="flex justify-end"><a href="{{ route('radiography.index')}}" class="botton1">Volver a Radiografias</a></div>
+<div class="flex justify-end"><a href="{{ route('radiography.index')}}" class="botton1">Radiografias</a></div>
 <div class="flex ml-10"><h1 class="txt-title2">Paciente:</h1></div>
 @if($radiography->patient)
     <h1 class="text-[22px] ml-12 mb-5">{{ $radiography->patient->name_patient }}</h1>

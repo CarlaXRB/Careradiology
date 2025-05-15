@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DicomOrthancController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -89,6 +90,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dicom-form', [DicomController::class, 'showForm'])->name('dicom.data');
     Route::post('/dicom-upload', [DicomController::class, 'uploadDicom'])->name('dicom.updata');
     Route::get('/dicom-records', [DicomController::class, 'showRecords'])->name('dicom.viewdata');
+
+    Route::get('/report/{report}',[ReportController::class,'show'])->name('report.show');
+    Route::post('/report/pdfreport', [ReportController::class, 'pdfreport'])->name('report.pdfreport');
 
     Route::get('/calendar', [EventController::class, 'calendar'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');

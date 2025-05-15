@@ -5,7 +5,7 @@
 @endsection
 @section('content')
 
-<div class="flex justify-end"><a href="{{ route('tomography.index')}}" class="botton1">Volver a Tomografía</a></div>
+<div class="flex justify-end"><a href="{{ route('tomography.index')}}" class="botton1">Tomografías</a></div>
 <div class="flex ml-10"><h1 class="txt-title2">Paciente:</h1></div>
 @if($tomography->patient)
     <h1 class="text-[22px] ml-12 mb-5">{{ $tomography->patient->name_patient }}</h1>
@@ -57,6 +57,10 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Filtros</span></div>
     </div>
     </form>
+    <div class="group relative">
+    <button id="report" class="btnimg" onclick="goToReport()"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
+    </div>
 </div>
 
 <script>
@@ -146,6 +150,11 @@
         console.error("Error al guardar la imagen:", error);
     });
     };
+    function goToReport() {
+        const selectedImage = images[currentIndex];
+        const reportUrl = `{{ route('tomography.report', $tomography->id) }}?image=${encodeURIComponent(selectedImage)}`;
+        window.location.href = reportUrl;
+    }
 </script>
 
 @endsection

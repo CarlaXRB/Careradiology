@@ -12,7 +12,7 @@
     line-height: 1.6;
     }
     h1, h2, h3 {
-        color: #0D47A1;
+        color:rgb(5, 55, 129);
     }
     h1 {
         text-align: center;
@@ -35,7 +35,7 @@
         margin: 8px 0;
     }
     p b {
-        color: #0D47A1;
+        color: rgb(5, 55, 129);
     }
     .section {
         margin-bottom: 30px;
@@ -78,11 +78,11 @@
 
     <div class="section">
         <h2>Información del estudio</h2>
-        <p><b>ID de la radiografía:</b> {{ $data['tomography_id'] }}</p>
-        <p><b>Fecha del estudio:</b> {{ $data['tomography_date'] }}</p>
-        <p><b>Tipo de estudio:</b> {{ $data['tomography_type'] }}</p>
-        <p><b>Doctor:</b> {{ $data['tomography_doctor'] }}</p>
-        <p><b>Radiólogo:</b> {{ $data['tomography_charge'] }}</p>
+        <p><b>ID de la radiografía:</b> {{ $data['radiography_id'] }}</p>
+        <p><b>Fecha del estudio:</b> {{ $data['radiography_date'] }}</p>
+        <p><b>Tipo de estudio:</b> {{ $data['radiography_type'] }}</p>
+        <p><b>Doctor:</b> {{ $data['radiography_doctor'] }}</p>
+        <p><b>Radiólogo:</b> {{ $data['radiography_charge'] }}</p>
     </div>
 
     <div class="section">
@@ -110,4 +110,3 @@
     </div>
 </body>
 </html>
-

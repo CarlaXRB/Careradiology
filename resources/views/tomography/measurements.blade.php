@@ -12,7 +12,6 @@
     <div style="position: relative; display: inline-block;">
         <img id="targetImage" src="{{ asset('storage/tomographies/'.$tomography->tomography_uri) }}" width="1000" style="cursor: pointer;" />
         
-        <!-- Aquí se dibujan los puntos y las líneas -->
         <div id="pointsContainer"></div>
         <svg id="lineContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
     </div>
@@ -31,27 +30,26 @@
     document.getElementById('measureDistance').addEventListener('click', function() {
         isMeasuringDistance = !isMeasuringDistance;
         this.textContent = isMeasuringDistance ? 'Dejar de Medir Distancia' : 'Medir Distancia';
-        document.getElementById('distanceDisplay').textContent = ''; // Limpiar el texto de distancia
-        points = []; // Limpiar puntos anteriores
-        document.getElementById('pointsContainer').innerHTML = ''; // Limpiar puntos en el contenedor
-        document.getElementById('lineContainer').innerHTML = ''; // Limpiar líneas anteriores
+        document.getElementById('distanceDisplay').textContent = ''; 
+        points = [];
+        document.getElementById('pointsContainer').innerHTML = ''; 
+        document.getElementById('lineContainer').innerHTML = ''; 
     });
 
     document.getElementById('measureAngle').addEventListener('click', function() {
         isMeasuringAngle = !isMeasuringAngle;
         this.textContent = isMeasuringAngle ? 'Dejar de Medir Ángulo' : 'Medir Ángulo';
-        document.getElementById('angleDisplay').textContent = ''; // Limpiar el texto de ángulo
+        document.getElementById('angleDisplay').textContent = ''; 
         points = []; // Limpiar puntos anteriores
-        document.getElementById('pointsContainer').innerHTML = ''; // Limpiar puntos en el contenedor
-        document.getElementById('lineContainer').innerHTML = ''; // Limpiar líneas anteriores
+        document.getElementById('pointsContainer').innerHTML = ''; 
+        document.getElementById('lineContainer').innerHTML = ''; 
     });
 
     document.getElementById('targetImage').addEventListener('click', function(event) {
         const rect = this.getBoundingClientRect();
-        const x = event.clientX - rect.left; // coordenada x relativa a la imagen
-        const y = event.clientY - rect.top;  // coordenada y relativa a la imagen
+        const x = event.clientX - rect.left; 
+        const y = event.clientY - rect.top; 
 
-        // Si se está midiendo distancia
         if (isMeasuringDistance && points.length < 2) {
             addPoint(x, y);
             if (points.length === 2) {
@@ -62,7 +60,6 @@
             return;
         }
 
-        // Si se está midiendo ángulo
         if (isMeasuringAngle && points.length < 3) {
             addPoint(x, y);
             if (points.length === 3) {
@@ -76,19 +73,18 @@
     });
 
     function addPoint(x, y) {
-        // Marcar el punto
+
         const point = document.createElement('div');
         point.style.position = 'absolute';
-        point.style.width = '8px'; // Tamaño de los puntos ajustado
-        point.style.height = '8px'; // Tamaño de los puntos ajustado
-        point.style.background = 'purple'; // Color de los puntos
+        point.style.width = '8px';
+        point.style.height = '8px';
+        point.style.background = 'purple';
         point.style.borderRadius = '50%';
         point.style.left = `${x}px`;
         point.style.top = `${y}px`;
         point.style.transform = 'translate(-50%, -50%)';
         document.getElementById('pointsContainer').appendChild(point);
 
-        // Añadir el punto a la lista
         points.push({ x: x, y: y });
     }
 
@@ -99,7 +95,7 @@
         line.setAttribute("y1", point1.y);
         line.setAttribute("x2", point2.x);
         line.setAttribute("y2", point2.y);
-        line.setAttribute("stroke", "green"); // Color de las líneas
+        line.setAttribute("stroke", "green");
         line.setAttribute("stroke-width", "2");
         svg.appendChild(line);
     }
@@ -108,7 +104,7 @@
         const svg = document.getElementById('lineContainer');
 
         // Calcular el centro del arco y el radio
-        const radius = 50; // Ajusta el radio según sea necesario
+        const radius = 50; 
         const angleAB = Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x);
         const angleBC = Math.atan2(pointC.y - pointB.y, pointC.x - pointB.x);
         const midX = pointB.x;
@@ -141,7 +137,7 @@
         const b = calculateDistance(pointA, pointB);
         const c = calculateDistance(pointA, pointC);
 
-        // Usar la ley de los cosenos para calcular el ángulo
+        // ley de los cosenos para calcular el ángulo
         const angleRad = Math.acos((b * b + c * c - a * a) / (2 * b * c));
         const angleDeg = angleRad * (180 / Math.PI);
         return angleDeg;

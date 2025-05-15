@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Tool extends Model
@@ -19,5 +20,8 @@ class Tool extends Model
     }
     public function patient():BelongsTo{
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
+    }
+    public function reports():HasMany{
+        return $this->hasMany(Report::class, 'ci_patient', 'ci_patient');
     }
 }

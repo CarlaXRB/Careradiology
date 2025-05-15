@@ -72,36 +72,6 @@ class RadiographyController extends Controller
     public function report(Radiography $radiography):View{
         return view('radiography.report', compact('radiography'));
     }
-    public function datareport(Request $request){
-        session()->flash('findings', $request->input('findings'));
-        session()->flash('diagnosis', $request->input('diagnosis'));
-        session()->flash('recommendations', $request->input('recommendations'));
-        session()->flash('conclusions', $request->input('conclusions'));
-        return redirect()->route('radiography.pdfreport');
-    }
-    public function pdfreport(Radiography $radiography){
-        $patient = $radiography->patient;
-        $data=[
-            'name_patient' => $patient->name_patient ?? $radiography->name_patient ?? 'No registrado',
-            'ci_patient' => $patient->ci_patient ?? $radiography->ci_patient ?? 'No registrado',
-            'birth_date' => $patient->birth_date ?? 'No disponible',
-            'gender' => $patient->gender ?? 'No disponible',
-            'insurance_code' => $patient->insurance_code ?? 'No disponible',
-            'patient_contact' => $patient->patient_contact ?? 'No disponible',
-            'family_contact' => $patient->family_contact ?? 'No disponible',
-            'radiography_id' => $radiography->radiography_id,
-            'radiography_date' => $radiography->radiography_date,
-            'radiography_type' => $radiography->radiography_type,
-            'radiography_doctor' => $radiography->radiography_doctor,
-            'radiography_charge' => $radiography->radiography_charge,
-            'findings' => request('findings'),
-            'diagnosis' => request('diagnosis'),
-            'recommendations' => request('recommendations'),
-            'conclusions' => request('conclusions'),
-        ];
-        $pdf = Pdf::loadView('radiography.pdfreport', ['data'=>$data]);
-        return $pdf->download($radiography->name_patient. "_" . $radiography->ci_patient . "_" .$radiography->radiography_id . '_reporte.pdf');
-    }
     public function search(Request $request) {
         $search = $request->input('search');
         $radiographies = Radiography::where('name_patient', 'LIKE', '%' . $search . '%')

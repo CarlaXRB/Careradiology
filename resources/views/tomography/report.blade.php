@@ -42,16 +42,18 @@
             <button id="showImageBtn" type="button" class="botton3">Mostrar Imagen</button>
         </div>
         <div id="imageContainer" class="flex justify-center mb-4" style="display: none;">
-            <img src="{{ asset('storage/tomographies/' . $tomography->tomography_uri) }}" alt="Tomografía" class="max-w-full h-auto">
-        </div>
-        <script>
-            document.getElementById('showImageBtn').addEventListener('click', function() {
-                var imageContainer = document.getElementById('imageContainer');
-                if (imageContainer.style.display === 'none') {imageContainer.style.display = 'flex';
-                } else {imageContainer.style.display = 'none';}
-            });
-        </script>
+        @php
+            $selectedImage = request()->query('image');
+        @endphp
 
+        @if($selectedImage)
+            <img src="{{ asset('storage/tomographies/converted_images/' . $tomography->id . '/' . $selectedImage) }}" alt="Tomografía" class="max-w-full h-auto">
+        @else
+            <p class="text-center text-red-500">No se ha seleccionado ninguna imagen.</p>
+        @endif
+
+        </div>
+        <input type="hidden" name="selected_image" id="selected_image_input" value="{{ $selectedImage }}">
         <div class="flex items-center mb-4"><label class="txt1">Hallazgos:</label><textarea name="findings" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10" rows="3">{{ session('findings') }}</textarea></div>
         <div class="flex items-center mb-4"><label class="txt1">Impresión Diagnostica:</label><textarea name="diagnosis" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10" rows="3">{{ session('diagnosis') }}</textarea></div>
         <div class="flex items-center mb-4"><label class="txt1">Recomendaciones:</label><textarea name="recommendations" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10" rows="3">{{ session('recommendations') }}</textarea></div>
@@ -59,4 +61,18 @@
         <div class="flex justify-center mb-4"><button type="submit" class="botton1">Descargar PDF</button></div>
     </div>
 </form>
+
+<script>
+            document.getElementById('showImageBtn').addEventListener('click', function() {
+                var imageContainer = document.getElementById('imageContainer');
+                if (imageContainer.style.display === 'none') {imageContainer.style.display = 'flex';
+                } else {imageContainer.style.display = 'none';}
+            });
+
+    const selectedImage = new URLSearchParams(window.location.search).get('image');
+    if (selectedImage) {
+        document.getElementById('selected_image_input').value = selectedImage;
+    }
+
+</script>
 @endsection

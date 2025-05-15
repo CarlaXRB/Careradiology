@@ -18,8 +18,8 @@
 <div>
     <h1 class="txt-title2">ESTUDIOS DEL PACIENTE</h1>
     <div class="grid grid-cols-4 gap-4 border-b border-purple-500 mb-3">
-        <h3 class="txt3">Fecha del estudio</h3>
-        <h3 class="txt3">Tipo de estudio</h3>
+        <h3 class="txt3">Fecha</h3>
+        <h3 class="txt3">Tipo</h3>
         <h3 class="txt3">Radiologo</h3>
     </div>
     @foreach($patient->radiographies as $radiography)
@@ -36,6 +36,14 @@
         <p>Tomografia - {{ $tomography->tomography_type }}<p>
         <p>{{ $tomography->tomography_charge }}<p></br>
         <div class="flex justify-end mb-4"><a href="{{ route('tomography.show', $tomography->id ) }}" class="botton2">Ver Estudio</a></div>
+    </div>
+    @endforeach
+    @foreach($patient->reports as $report)
+    <div class="grid grid-cols-8 border-b border-gray-600 gap-4 mb-3 text-white pl-10">
+        <p>{{ $report->study_date }}<p>
+        <p>Reporte - {{ $report->study_id }}<p>
+        <p>{{ $report->created_by }}<p></br>
+        <div class="flex justify-end mb-4"><a href="{{ route('report.show', $report->id ) }}" target="_blank" class="botton3">Ver Reporte</a></div>
     </div>
     @endforeach
 </div>

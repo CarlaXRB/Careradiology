@@ -10,6 +10,7 @@ use App\Http\Requests\ToolRequest;
 use App\Models\Tool;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Imagick;
 
 class ToolController extends Controller
 {
@@ -142,7 +143,8 @@ class ToolController extends Controller
             'radiography_doctor' => $radiography->radiography_doctor ?? 'No disponible',
             'radiography_charge' => $radiography->radiography_charge ?? 'No disponible',
         ];
-        $pdf = Pdf::loadView('tool.pdfreportradio', ['data' => $data]);
+        $imagePath = storage_path('app/public/tools/' . $tool->tool_uri);
+        $pdf = Pdf::loadView('tool.pdfreport', ['data' => $data, 'imagePath' => $imagePath]);
     } elseif ($isTomography) {
         $data += [
             'tomography_id' => $tomography->tomography_id ?? 'No disponible',
@@ -151,7 +153,9 @@ class ToolController extends Controller
             'tomography_doctor' => $tomography->tomography_doctor ?? 'No disponible',
             'tomography_charge' => $tomography->tomography_charge ?? 'No disponible',
         ];
-        $pdf = Pdf::loadView('tool.pdfreporttomo', ['data' => $data]);
+        $imagePath = storage_path('app/public/tools/' . $tool->tool_uri);
+        //$pdf = Pdf::loadView('radiography.pdfreport', ['data' => $data, 'imagePath' => $imagePath]);
+        $pdf = Pdf::loadView('tool.pdfreporttomo', ['data' => $data, 'imagePath' => $imagePath]);
     } else {
         return back()->with('error', 'No hay datos de radiografía ni de tomografía disponibles.');
     }
@@ -168,5 +172,4 @@ class ToolController extends Controller
                      ->get();
         return view('tool.search', compact('tools', 'id'));
     }
-    
 }

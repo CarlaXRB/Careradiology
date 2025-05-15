@@ -172,7 +172,7 @@
     invertColorsButton.addEventListener('click', () => {
         isNegative = !isNegative; 
         if (isNegative) {
-            img.style.filter += ' invert(1)'; // no sobreescribir, agregar
+            img.style.filter = isNegative ? 'invert(1)' : 'none';
         } else {
             img.style.filter = img.style.filter.replace(' invert(1)', ''); 
         }
@@ -200,50 +200,60 @@
 
     // Borde
     edgesButton.addEventListener('click', () => {
-        isEdgeDetectionActive = !isEdgeDetectionActive;
+    isEdgeDetectionActive = !isEdgeDetectionActive;
 
         if (isEdgeDetectionActive) {
-            img.style.filter += ' grayscale(100%)'; // no sobreescribir, agregar
+            img.style.display = 'none';
+            canvas.style.display = 'block';
             applyEdgeDetection();
         } else {
-            img.style.filter = img.style.filter.replace(' grayscale(100%)', ''); 
+            canvas.style.display = 'none';
+            img.style.display = 'block';
         }
     });
 
     function applyEdgeDetection() {
         const imgData = ctx.getImageData(0, 0, img.width, img.height);
         const data = imgData.data;
-        const width = img.width;
-        const height = img.height;
+        const output = ctx.createImageData(img.width, img.height);
+        const outData = output.data;
 
-        for (let y = 1; y < height - 1; y++) {
-            for (let x = 1; x < width - 1; x++) {
-                const sobelXValue = applySobelKernel(x, y, sobelX);
-                const sobelYValue = applySobelKernel(x, y, sobelY);
+        for (let y = 1; y < img.height - 1; y++) {
+        for (let x = 1; x < img.width - 1; x++) {
+            const sobelXValue = applySobelKernel(x, y, sobelX, data, img.width);
+            const sobelYValue = applySobelKernel(x, y, sobelY, data, img.width);
 
-                const magnitude = Math.sqrt(sobelXValue * sobelXValue + sobelYValue * sobelYValue);
-                const pixelIndex = (y * width + x) * 4;
+            const magnitude = Math.sqrt(sobelXValue ** 2 + sobelYValue ** 2);
+            const edgeColor = magnitude > 255 ? 255 : magnitude;
+            const index = (y * img.width + x) * 4;
 
-                const edgeColor = magnitude > 255 ? 255 : magnitude;
-                data[pixelIndex] = data[pixelIndex + 1] = data[pixelIndex + 2] = edgeColor;
-            }
+            outData[index] = outData[index + 1] = outData[index + 2] = edgeColor;
+            outData[index + 3] = 255;
         }
-
-        ctx.putImageData(imgData, 0, 0);
     }
 
-    function applySobelKernel(x, y, kernel) {
-        let sum = 0;
+        ctx.putImageData(output, 0, 0);
+    }
 
-        for (let ky = -1; ky <= 1; ky++) {
-            for (let kx = -1; kx <= 1; kx++) {
-                const pixelIndex = ((y + ky) * img.width + (x + kx)) * 4;
-                const pixelValue = (img.width * 4 * (y + ky) + (x + kx)) * 4;
-                sum += kernel[ky + 1][kx + 1] * pixelValue;
-            }
+    function applySobelKernel(x, y, kernel, data, width) {
+    let sum = 0;
+
+    for (let ky = -1; ky <= 1; ky++) {
+        for (let kx = -1; kx <= 1; kx++) {
+            const px = x + kx;
+            const py = y + ky;
+            const index = (py * width + px) * 4;
+
+            const r = data[index];
+            const g = data[index + 1];
+            const b = data[index + 2];
+            const gray = (r + g + b) / 3;
+
+            sum += kernel[ky + 1][kx + 1] * gray;
         }
+    }
 
-        return sum;
+    return sum;
     }
 </script>
 @endsection

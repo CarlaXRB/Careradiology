@@ -14,6 +14,6 @@ class Dicom extends Model
     ];
 
     protected $casts = [
-        'metadata' => 'array' // Convierte el JSON en un array de PHP automáticamente
+        'metadata' => 'array'
     ];
 }

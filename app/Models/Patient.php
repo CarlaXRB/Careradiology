@@ -23,4 +23,7 @@ class Patient extends Model
     public function events():HasMany{
         return $this->hasMany(Event::class, 'patient_id', 'id');
     }
+    public function reports():HasMany{
+        return $this->hasMany(Report::class, 'ci_patient', 'ci_patient');
+    }
 }
