@@ -26,19 +26,27 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Negativo</span></div>
     </div>
     <div class="group relative">
-        <button id="increaseSharpness" class="btnimg"><img src="{{ asset('assets/images/filter1.png') }}" width="50" height="50"></button>
+        <button id="increaseBrightness" class="btnimg"><img src="{{ asset('assets/images/filter3.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Más_Brillo</span></div>
+    </div>
+    <div class="group relative">
+        <button id="decreaseBrightness" class="btnimg"><img src="{{ asset('assets/images/filter4.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Menos_Brillo</span></div>
+    </div>
+    <div class="group relative">
+        <button id="increaseContrast" class="btnimg"><img src="{{ asset('assets/images/filter1.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Más_Contraste</span></div>
     </div>
     <div class="group relative">
-        <button id="decreaseSharpness" class="btnimg"><img src="{{ asset('assets/images/filter2.png') }}" width="50" height="50"></button>
+        <button id="decreaseContrast" class="btnimg"><img src="{{ asset('assets/images/filter2.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Menos_Contraste</span></div>
     </div>
     <div class="group relative">
         <button id="edgesButton" class="btnimg"><img src="{{ asset('assets/images/edge.png') }}" width="50" height="50"></button>
-        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Bordes</span></div>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Marcar_Bordes</span></div>
     </div>
-    <form action="{{ route('tool.new', ['tomography_id' => $tool->tool_tomography_id, 'ci_patient' => $tool->ci_patient, 'id' => $tool->id]) }}" method="POST" enctype="multipart/form-data">
-    @csrf
+    <form id="saveImageForm" action="{{ route('tool.new', ['tomography_id' => $tool->tool_tomography_id, 'ci_patient' => $tool->ci_patient, 'id' => $tool->id]) }}" method="POST" enctype="multipart/form-data">
+        @csrf
         <div class="group relative">
             <button id="save" class="btnimg" type="submit"><img src="{{ asset('assets/images/save.png') }}" width="50" height="50"></button>
             <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Guardar</span></div>
@@ -86,207 +94,188 @@
 </div>
 
 <script>
-    let zoomLevel = 1;
-    let initialPosition = { left: '50%', top: '50%' };
-    let isDragging = false;
-    let startX, startY, initialMouseX, initialMouseY;
-    let isNegative = false;
-    let sharpnessLevel = 1;
-    let isMagnifierActive = false;
-    let isEdgeDetectionActive = false;
-
+document.addEventListener('DOMContentLoaded', () => {
     const img = document.getElementById('toolImage');
+    const container = img.parentElement;
     const magnifierLens = document.getElementById('magnifierLens');
-    const zoomInButton = document.getElementById('zoomIn');
-    const zoomOutButton = document.getElementById('zoomOut');
-    const invertColorsButton = document.getElementById('invertColors');
-    const increaseSharpnessButton = document.getElementById('increaseSharpness');
-    const decreaseSharpnessButton = document.getElementById('decreaseSharpness');
-    const magnifierButton = document.getElementById('magnifier');
-    const edgesButton = document.getElementById('edgesButton');
 
-    img.style.left = initialPosition.left;
-    img.style.top = initialPosition.top;
-    // Máscaras de Sobel
-    const sobelX = [
-        [-1, 0, 1],
-        [-2, 0, 2],
-        [-1, 0, 1]
-    ];
+    let zoom = 1;
+    let brightness = 0;  
+    let contrast = 1;   
+    let isNegative = false;
+    let edgesApplied = false;
 
-    const sobelY = [
-        [-1, -2, -1],
-        [0, 0, 0],
-        [1, 2, 1]
-    ];
-
-    // Arrastre
-    img.addEventListener('mousedown', (event) => {
-        if (zoomLevel > 1) {
-            isDragging = true;
-            startX = img.offsetLeft;
-            startY = img.offsetTop;
-            initialMouseX = event.clientX;
-            initialMouseY = event.clientY;
-            event.preventDefault();
-        }
-    });
-
-    document.addEventListener('mousemove', (event) => {
-        if (isDragging) {
-            const dx = event.clientX - initialMouseX;
-            const dy = event.clientY - initialMouseY;
-            img.style.left = `${startX + dx}px`;
-            img.style.top = `${startY + dy}px`;
-        }
-
-        if (isMagnifierActive) {
-            const rect = img.getBoundingClientRect();
-            const lensSize = 100; 
-            const offset = 20; 
-            const x = event.clientX - rect.left - lensSize / 2 + offset; 
-            const y = event.clientY - rect.top - lensSize / 2 + offset;
-
-            magnifierLens.style.width = `${lensSize}px`;
-            magnifierLens.style.height = `${lensSize}px`;
-            magnifierLens.style.left = `${x}px`;
-            magnifierLens.style.top = `${y}px`;
-            magnifierLens.style.display = 'block';
-
-            // lupa
-            magnifierLens.style.backgroundImage = `url(${img.src})`;
-            magnifierLens.style.backgroundSize = `${img.width * 2}px ${img.height * 2}px`; 
-            magnifierLens.style.backgroundPosition = `-${(x - offset) * 2}px -${(y - offset) * 2}px`; 
-        }
-    });
-
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        magnifierLens.style.display = 'none';
-    });
-
-    zoomInButton.addEventListener('click', () => {
-        zoomLevel += 0.1; 
-        img.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`; 
-    });
-
-    zoomOutButton.addEventListener('click', () => {
-        if (zoomLevel > 1) { 
-            zoomLevel -= 0.1; 
-            img.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`; 
-        }
-
-        if (zoomLevel <= 1) {
-            zoomLevel = 1; 
-            img.style.transform = `translate(-50%, -50%) scale(${zoomLevel})`; 
-            img.style.left = initialPosition.left; 
-            img.style.top = initialPosition.top;
-        }
-    });
-    //Negativo
-    invertColorsButton.addEventListener('click', () => {
-        isNegative = !isNegative; 
-        img.style.filter = isNegative ? 'invert(1)' : 'none'; 
-    });
-    // Aumentar Contraste
-    increaseSharpnessButton.addEventListener('click', () => {
-        sharpnessLevel += 0.1; 
-        img.style.filter = `contrast(${sharpnessLevel}) ${isNegative ? 'invert(1)' : ''}`; 
-    });
-
-    // Disminuir Contraste
-    decreaseSharpnessButton.addEventListener('click', () => {
-        if (sharpnessLevel > 0.5) { 
-            sharpnessLevel -= 0.1; 
-            img.style.filter = `contrast(${sharpnessLevel}) ${isNegative ? 'invert(1)' : ''}`;
-        }
-    });
-
-    //Detectar bordes
-    function applyEdgeDetection() {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth; 
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const { width, height } = canvas;
-    const data = imgData.data;
-
-    const outputData = new Uint8ClampedArray(data.length);
-
-    for (let y = 1; y < height - 1; y++) {
-        for (let x = 1; x < width - 1; x++) {
-            let pixelX = 0;
-            let pixelY = 0;
-
-            for (let ky = -1; ky <= 1; ky++) {
-                for (let kx = -1; kx <= 1; kx++) {
-                    const pixelIndex = ((y + ky) * width + (x + kx)) * 4;
-                    pixelX += data[pixelIndex] * sobelX[ky + 1][kx + 1];
-                    pixelY += data[pixelIndex] * sobelY[ky + 1][kx + 1];
-                }
-            }
-
-            const magnitude = Math.sqrt(pixelX * pixelX + pixelY * pixelY);
-            const color = Math.min(255, magnitude);
-
-            const outputIndex = (y * width + x) * 4;
-            outputData[outputIndex] = color;
-            outputData[outputIndex + 1] = color;
-            outputData[outputIndex + 2] = color;
-            outputData[outputIndex + 3] = 255;
-        }
+    function updateFilters() {
+        let filters = [];
+        filters.push(`brightness(${1 + brightness})`);
+        filters.push(`contrast(${contrast})`);
+        if (isNegative) filters.push('invert(1)');
+        img.style.filter = filters.join(' ');
     }
-    ctx.putImageData(new ImageData(outputData, width, height), 0, 0);
 
-    const edgeImage = canvas.toDataURL();
-    img.src = edgeImage;
-}
-    edgesButton.addEventListener('click', () => {
-        isEdgeDetectionActive = !isEdgeDetectionActive;
-        if (isEdgeDetectionActive) {
-            applyEdgeDetection();
-        } else {
-            img.src = img.src; 
+    updateFilters();
+    img.style.transform = 'translate(-50%, -50%) scale(1)';
+
+    document.getElementById('zoomIn').addEventListener('click', () => {
+        zoom += 0.1;
+        img.style.transform = `translate(-50%, -50%) scale(${zoom})`;
+    });
+    document.getElementById('zoomOut').addEventListener('click', () => {
+        if (zoom > 0.5) {
+            zoom -= 0.1;
+            img.style.transform = `translate(-50%, -50%) scale(${zoom})`;
         }
     });
-    // Lupa
-    magnifierButton.addEventListener('click', () => {
-        isMagnifierActive = !isMagnifierActive; 
-        magnifierLens.style.display = isMagnifierActive ? 'block' : 'none';
+    document.getElementById('increaseBrightness').addEventListener('click', () => {
+        brightness = Math.min(brightness + 0.1, 1);
+        updateFilters();
     });
-
-    //Descargar Imagen
-    const downloadImageButton = document.getElementById('downloadImage');
-
-    downloadImageButton.addEventListener('click', () => {
-        const canvas = document.createElement('canvas');
+    document.getElementById('decreaseBrightness').addEventListener('click', () => {
+        brightness = Math.max(brightness - 0.1, -1);
+        updateFilters();
+    });
+    document.getElementById('increaseContrast').addEventListener('click', () => {
+        contrast = Math.min(contrast + 0.1, 3);
+        updateFilters();
+    });
+    document.getElementById('decreaseContrast').addEventListener('click', () => {
+        contrast = Math.max(contrast - 0.1, 0);
+        updateFilters();
+    });
+    document.getElementById('invertColors').addEventListener('click', () => {
+        isNegative = !isNegative;
+        updateFilters();
+    });
+    // Detección de bordes (aplica efecto sobel al canvas temporal)
+    document.getElementById('edgesButton').addEventListener('click', () => {
+        if (edgesApplied) {
+            // Quitar bordes, restaurar original
+            img.src = '{{ asset('storage/tools/'.$tool->tool_uri) }}';
+            edgesApplied = false;
+            updateFilters();
+            return;
+        }
+        // Crear canvas temporal
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Obtener datos
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let data = imageData.data;
+        // Filtro sobel
+        const width = canvas.width;
+        const height = canvas.height;
+        // Crear buffer para resultado
+        let output = new Uint8ClampedArray(data.length);
+        // Kernels sobel
+        const kernelX = [
+            -1, 0, 1,
+            -2, 0, 2,
+            -1, 0, 1
+        ];
+        const kernelY = [
+            -1, -2, -1,
+             0,  0,  0,
+             1,  2,  1
+        ];
+        function getPixel(x, y, c) {
+            if (x < 0) x = 0;
+            if (x >= width) x = width - 1;
+            if (y < 0) y = 0;
+            if (y >= height) y = height - 1;
+            return data[(y * width + x) * 4 + c];
+        }
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                let gx = 0, gy = 0;
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        let px = x + kx;
+                        let py = y + ky;
+                        let val = getPixel(px, py, 0);
+                        let idx = (ky + 1) * 3 + (kx + 1);
+                        gx += kernelX[idx] * val;
+                        gy += kernelY[idx] * val;
+                    }
+                }
+                let mag = Math.sqrt(gx * gx + gy * gy);
+                mag = Math.min(255, mag);
 
-        ctx.filter = img.style.filter;
-        ctx.drawImage(img, 0, 0);
-
-        const link = document.createElement('a');
-        const ci_patient = "{{ $tool->ci_patient }}";  
-        const tomography_id = "{{ $tool->tool_tomography_id }}"; 
-        link.download = `filtros_${tomography_id}_${ci_patient}_${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
+                let i = (y * width + x) * 4;
+                output[i] = output[i+1] = output[i+2] = mag;
+                output[i+3] = 255;
+            }
+        }
+        for (let i = 0; i < data.length; i++) {
+            data[i] = output[i];
+        }
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+        edgesApplied = true;
+        updateFilters();
+    });
+    // Lupa (magnifier)
+    document.getElementById('magnifier').addEventListener('click', () => {
+        if (magnifierLens.style.display === 'block') {
+            magnifierLens.style.display = 'none';
+            container.removeEventListener('mousemove', magnifyMove);
+        } else {
+            magnifierLens.style.display = 'block';
+            magnifierLens.style.width = '150px';
+            magnifierLens.style.height = '150px';
+            magnifierLens.style.backgroundImage = `url(${img.src})`;
+            magnifierLens.style.backgroundRepeat = 'no-repeat';
+            magnifierLens.style.backgroundSize = `${img.width * 2}px ${img.height * 2}px`;
+            container.addEventListener('mousemove', magnifyMove);
+        }
     });
 
-    document.querySelector('form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const dataURL = canvas.toDataURL({
-            format: 'png',
-            quality: 1.0,
-        });
-        document.getElementById('canvasData').value = dataURL;
-        console.log(dataURL);
+    function magnifyMove(e) {
+        const pos = container.getBoundingClientRect();
+        let x = e.clientX - pos.left;
+        let y = e.clientY - pos.top;
+
+        const lensWidth = magnifierLens.offsetWidth / 2;
+        const lensHeight = magnifierLens.offsetHeight / 2;
+
+        // Limitar movimiento dentro del contenedor
+        if (x < lensWidth) x = lensWidth;
+        if (x > container.offsetWidth - lensWidth) x = container.offsetWidth - lensWidth;
+        if (y < lensHeight) y = lensHeight;
+        if (y > container.offsetHeight - lensHeight) y = container.offsetHeight - lensHeight;
+
+        magnifierLens.style.left = (x - lensWidth) + 'px';
+        magnifierLens.style.top = (y - lensHeight) + 'px';
+
+        const bgX = -x * 2 + lensWidth;
+        const bgY = -y * 2 + lensHeight;
+        magnifierLens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+    }
+    // Descargar
+    document.getElementById('downloadImage').addEventListener('click', () => {
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        let filters = [];
+        filters.push(`brightness(${1 + brightness})`);
+        filters.push(`contrast(${contrast})`);
+        if (isNegative) filters.push('invert(1)');
+        ctx.filter = filters.join(' ');
+
+        let tempImg = new Image();
+        tempImg.crossOrigin = "anonymous";
+        tempImg.onload = () => {
+            ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+            let link = document.createElement('a');
+            link.download = 'tool.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        };
+        tempImg.src = img.src;
     });
 
     document.getElementById('save').onclick = function(event) {
@@ -323,12 +312,42 @@
         .catch(error => {
             console.error("Error al guardar la imagen:", error);
         });
-    }, 'image/png');
-};
+        }, 'image/png');
+    };
 
-    //Actualizar
-    document.getElementById('updateButton').addEventListener('click', function () {
-        location.reload();
+    let isDragging = false;
+    let startX, startY;
+    let currentX = 0, currentY = 0;
+
+    img.style.cursor = 'grab';
+
+    container.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX - currentX;
+        startY = e.clientY - currentY;
+        img.style.cursor = 'grabbing';
     });
+    container.addEventListener('mouseup', () => {
+        isDragging = false;
+        img.style.cursor = 'grab';
+    });
+    container.addEventListener('mouseleave', () => {
+        isDragging = false;
+        img.style.cursor = 'grab';
+    });
+    container.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        currentX = e.clientX - startX;
+        currentY = e.clientY - startY;
+        img.style.left = `calc(50% + ${currentX}px)`;
+        img.style.top = `calc(50% + ${currentY}px)`;
+    });
+});
+//Actualizar
+document.getElementById('updateButton').addEventListener('click', function () {
+    location.reload();
+});
 </script>
 @endsection

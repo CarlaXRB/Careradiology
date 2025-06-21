@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('ci_patient');
-            $table->unsignedBigInteger('study_id');
-            $table->date('study_date');
-            $table->string('study_uri');
+            $table->unsignedBigInteger('report_id');
+            $table->date('report_date');
+            $table->string('report_uri');
             $table->string('created_by'); 
             $table->timestamps();
         });

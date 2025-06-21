@@ -5,70 +5,180 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Radiography;
 use App\Models\Tomography;
+use App\Models\Tool;
+use App\Models\Patient;
 use App\Models\Report;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-    public function pdfreport(Request $request){
-        $radiography = Radiography::with('patient')->findOrFail($request->input('radiography_id'));
-        $patient = $radiography->patient;
+    public function show(Request $request, $type, $id){
+        $selectedImage = $request->query('selected_image', null);
 
-    $data = [
-        'name_patient' => $patient->name_patient ?? $radiography->name_patient ?? 'No registrado',
-        'ci_patient' => $patient->ci_patient ?? $radiography->ci_patient ?? 'No registrado',
-        'birth_date' => $patient->birth_date ?? 'No disponible',
-        'gender' => $patient->gender ?? 'No disponible',
-        'insurance_code' => $patient->insurance_code ?? 'No disponible',
-        'patient_contact' => $patient->patient_contact ?? 'No disponible',
-        'family_contact' => $patient->family_contact ?? 'No disponible',
-        'radiography_id' => $radiography->radiography_id,
-        'radiography_date' => $radiography->radiography_date,
-        'radiography_type' => $radiography->radiography_type,
-        'radiography_doctor' => $radiography->radiography_doctor,
-        'radiography_charge' => $radiography->radiography_charge,
-        'findings' => $request->input('findings'),
-        'diagnosis' => $request->input('diagnosis'),
-        'recommendations' => $request->input('recommendations'),
-        'conclusions' => $request->input('conclusions'),
-    ];
-
-        $report = new Report();
-        $report->ci_patient = $data['ci_patient'];
-        $report->study_id = $radiography->radiography_id;
-        $report->study_date = now();
-        $report->created_by = Auth::user()->email;
-        $report->study_uri = '';
-        $report->save();
-
-        $downloadName = $data['name_patient'] . "_" . $data['ci_patient'] . "_" . $data['study_id'] . '_reporte.pdf';
-        $downloadName = str_replace(' ', '_', $downloadName);
-
-        $internalFileName = $report->id . '.pdf';
-        $relativePath = 'reports/' . $internalFileName;
-        $savePath = public_path('storage/' . $relativePath);
-
-        $imagePath = storage_path('app/public/radiographies/' . $radiography->radiography_uri);
-        $imageExists = file_exists($imagePath) && exif_imagetype($imagePath);
-
-    $pdf = \PDF::loadView('report.pdfreport', [
-        'data' => $data,
-        'imagePath' => $imageExists ? $imagePath : null,
-    ]);
-        $pdf->save($savePath);
-        $report->study_uri = $relativePath;
-        $report->save();
-        return response()->download($savePath, $downloadName);
-    }
-    public function show($id){
-        $report = Report::findOrFail($id);
-        $filePath = public_path('storage/' . $report->study_uri);
-        if (!file_exists($filePath)) {
-            abort(404, 'Archivo no encontrado.');
+        if ($type === 'radiography') {
+            $study = Radiography::findOrFail($id);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
+        } elseif ($type === 'tomography') {
+            $study = Tomography::findOrFail($id);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
+        } elseif ($type === 'tool') {   
+            $study = Tool::findOrFail($id);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
         }
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
+        return view('report.reportForm', [
+            'study' => $study,
+            'patient' => $patient,
+            'selectedImage' => $selectedImage,
+            'studyType' => $type,
         ]);
+    }
+    public function generatePDF(Request $request){
+        $studyType = $request->input('study_type');
+        $studyId = $request->input('study_id');
+        $selectedImage = $request->input('selected_image', null);
+
+        $findings = $request->input('findings', '');
+        $diagnosis = $request->input('diagnosis', '');
+        $conclusions = $request->input('conclusions', '');
+        $recommendations = $request->input('recommendations', '');
+
+        $storagePath = 'reports'; 
+
+        if ($studyType === 'radiography') {
+            $study = Radiography::findOrFail($studyId);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
+
+            $studyFields = [
+                'study_id' => $study->radiography_id,
+                'study_date' => $study->radiography_date,
+                'study_type' => $study->radiography_type,
+                'study_doctor' => $study->radiography_doctor,
+                'study_charge' => $study->radiography_charge,
+            ];
+
+            $imagePath = null;
+            if ($study->radiography_uri) {
+                $imagePath = storage_path('app/public/radiographies/' . $study->radiography_uri);
+            }
+
+            $pdf = Pdf::loadView('report.reportPDF', compact(
+                'study', 'patient', 'studyFields', 'imagePath', 'studyType', 
+                'findings', 'diagnosis', 'conclusions', 'recommendations'
+            ));
+
+            $fileName = 'Informe_' . $study->ci_patient . '_'. $study->radiography_id . '_' . time() . '.pdf';
+            $fullPath = base_path('public/storage/' . $storagePath . '/' . $fileName);
+            $pdf->save($fullPath);
+
+            Report::create([
+                'ci_patient' => $study->ci_patient,
+                'report_id' => $study->radiography_id,
+                'report_date' => now()->toDateString(),
+                'report_uri' => 'storage/' . $storagePath . '/' . $fileName,
+                'created_by' => Auth::user() ? Auth::user()->name : 'system',
+            ]);
+
+            return response()->download($fullPath, $fileName);
+
+        } elseif ($studyType === 'tomography') {
+            $study = Tomography::findOrFail($studyId);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
+
+            $studyFields = [
+                'study_id' => $study->tomography_id,
+                'study_date' => $study->tomography_date,
+                'study_type' => $study->tomography_type,
+                'study_doctor' => $study->tomography_doctor,
+                'study_charge' => $study->tomography_charge,
+            ];
+
+            $imagePath = null;
+            if ($selectedImage) {
+                $possiblePath = storage_path('app/public/tomographies/converted_images/' . $study->id . '/' . $selectedImage);
+                if (file_exists($possiblePath)) {
+                    $imagePath = $possiblePath;
+                }
+            }
+
+            $pdf = Pdf::loadView('report.reportPDF', compact(
+                'study', 'patient', 'studyFields', 'imagePath', 'studyType', 
+                'findings', 'diagnosis', 'conclusions', 'recommendations'
+            ));
+
+            $fileName = 'Informe_' . $study->ci_patient . '_'. $study->tomography_id . '_' . time() . '.pdf';
+            $fullPath = base_path('public/storage/' . $storagePath . '/' . $fileName);
+            $pdf->save($fullPath);
+
+            Report::create([
+                'ci_patient' => $study->ci_patient,
+                'report_id' => $study->tomography_id,
+                'report_date' => now()->toDateString(),
+                'report_uri' => 'storage/' . $storagePath . '/' . $fileName,
+                'created_by' => Auth::user() ? Auth::user()->name : 'system',
+            ]);
+
+            return response()->download($fullPath, $fileName);
+
+        } elseif ($studyType === 'tool') {
+            $study = Tool::findOrFail($studyId);
+            $patient = Patient::where('ci_patient', $study->ci_patient)->first();
+
+            $report_id = null;
+            if($study->tool_radiography_id != 0){
+                $studyFields = [
+                    'study_id' => $study->radiography_id,
+                    'study_date' => $study->tool_date,
+                    'study_type' => $study->radiography_type,
+                    'study_doctor' => $study->radiography_doctor,
+                    'study_charge' => $study->radiography_charge,
+                ];
+                $report_id = $study->radiography->radiography_id;
+            }elseif($study->tool_tomography_id != 0){
+                $studyFields = [
+                    'study_id' => $study->tomography_id,
+                    'study_date' => $study->tool_date,
+                    'study_type' => $study->tomography_type,
+                    'study_doctor' => $study->tomography_doctor,
+                    'study_charge' => $study->tomography_charge,
+                ];
+                $report_id = $study->tomography->tomography_id;
+            }
+
+            $imagePath = null;
+            if ($study->tool_uri) {
+                $imagePath = storage_path('app/public/tools/' . $study->tool_uri);
+            }
+
+            $pdf = Pdf::loadView('report.reportPDF', compact(
+                'study', 'patient', 'studyFields', 'imagePath', 'studyType', 
+                'findings', 'diagnosis', 'conclusions', 'recommendations'
+            ));
+
+            $fileName = 'Informe_' . $study->ci_patient . '_'. $study->tool_radiography_id . '_'. $study->tool_tomography_id . '_' . time() . '.pdf';
+            $fullPath = base_path('public/storage/' . $storagePath . '/' . $fileName);
+            $pdf->save($fullPath);
+
+            Report::create([
+                'ci_patient' => $study->ci_patient,
+                'report_id' => $report_id,
+                'report_date' => now()->toDateString(),
+                'report_uri' => 'storage/' . $storagePath . '/' . $fileName,
+                'created_by' => Auth::user() ? Auth::user()->name : 'system',
+            ]);
+
+            return response()->download($fullPath, $fileName);
+
+        } else {
+            abort(404);
+        }
+    }
+    public function view($id){
+        $report = Report::findOrFail($id);
+        $filePath = public_path($report->report_uri);
+        if (!file_exists($filePath)) {
+            abort(404, 'El archivo del reporte no existe.');
+        }
+        return response()->file($filePath);
     }
 }

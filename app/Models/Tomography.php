@@ -18,6 +18,9 @@ class Tomography extends Model
         return $this->hasMany(Tool::class, 'tomography_id', 'tool_tomography_id');
     }
     public function reports():HasMany{
-        return $this->hasMany(Report::class, 'study_id', 'tomography_id');
+        return $this->hasMany(Report::class, 'report_id', 'tomography_id');
+    }
+    public function dicoms():HasMany{
+        return $this->hasMany(Tool::class, 'patient_id', 'ci_patient');
     }
 }

@@ -4,7 +4,7 @@
     {{ __('Crear Tomografia') }}
 @endsection
 @section('content')
-<div class="flex justify-end"><a href="{{ route('tomography.index') }}" class="botton1">Volver a Tomografias</a></div>
+<div class="flex justify-end"><a href="{{ route('tomography.index') }}" class="botton1">Tomografias</a></div>
     <form method="POST" action="{{ route('tomography.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="text-gray-900 dark:text-white">

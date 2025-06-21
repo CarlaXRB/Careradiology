@@ -28,7 +28,7 @@ return new class extends Migration
             if (!Schema::hasColumn('events', 'patient_id')) {
                 $table->unsignedBigInteger('patient_id')->nullable()->after('id');
                 $table->foreign('patient_id')->references('id')->on('patients')->nullOnDelete();
-            }
+            } 
         });
     }
     

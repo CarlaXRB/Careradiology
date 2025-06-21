@@ -20,6 +20,8 @@
     <h3 class="txt2">Evento:</h3><p>{{ $event->event }}</p>
     <h3 class="txt2">Inicio:</h3><p>{{ \Carbon\Carbon::parse($event->start_date)->format('d-m-Y H:i') }}</p>
     <h3 class="txt2">Fin:</h3><p>{{ \Carbon\Carbon::parse($event->end_date)->format('d-m-Y H:i') }}</p>
+    <h3 class="txt2">Duración:</h3><p>{{ $event->duration_minutes }} minutos</p>
+    <h3 class="txt2">Sala:</h3><p>{{ $event->room }}</p>
     <h3 class="txt2">Doctor:</h3><p>{{ $event->assignedDoctor->name ?? 'No asignado' }}</p>
     <h3 class="txt2">Radiólogo:</h3><p>{{ $event->assignedRadiologist->name ?? 'No asignado' }}</p>
     <h3 class="txt2">Detalles:</h3><p class="mb-8">{{ $event->details ?? 'No hay detalles' }}</p>

@@ -5,20 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-
 use App\Http\Requests\RadiographyRequest;
 use App\Services\ImageFilterService;
 use App\Models\Radiography;
-
-use Barryvdh\DomPDF\Facade\Pdf;
 use Imagick;
 
 class RadiographyController extends Controller
 {
     protected $imageFilterService;
 
-    public function __construct(ImageFilterService $imageFilterService)
-    {
+    public function __construct(ImageFilterService $imageFilterService){
         $this->imageFilterService = $imageFilterService;
     }
     public function index():View{
@@ -72,7 +68,7 @@ class RadiographyController extends Controller
     public function report(Radiography $radiography):View{
         return view('radiography.report', compact('radiography'));
     }
-    public function search(Request $request) {
+    public function search(Request $request){
         $search = $request->input('search');
         $radiographies = Radiography::where('name_patient', 'LIKE', '%' . $search . '%')
                 ->orWhere('radiography_id', 'LIKE', '%' . $search . '%')

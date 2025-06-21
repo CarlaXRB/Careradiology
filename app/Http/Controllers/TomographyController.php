@@ -6,12 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-
 use App\Http\Requests\TomographyRequest;
 use App\Models\Tomography;
-use Barryvdh\DomPDF\Facade\Pdf;
-
 use Imagick;
 use ZipArchive;
 
@@ -71,11 +67,9 @@ class TomographyController extends Controller
     
         return redirect()->route('tomography.convert', ['id' => $tomography->id]);
     }
-
     public function createdcm(): View {
         return view('tomography.createdcm');
     }
-    
     public function storedcm(Request $request): RedirectResponse {
         $request->validate([
             'tomography_folder.*' => 'required|file|mimes:dcm',
@@ -104,7 +98,6 @@ class TomographyController extends Controller
         $tomography->save();
         return redirect()->route('tomography.convert', ['id' => $tomography->id]);
     }
-
     public function convert($id){
         $tomography = Tomography::find($id);
         if (!$tomography) {
@@ -204,41 +197,6 @@ class TomographyController extends Controller
     public function report(Tomography $tomography):View{
         return view('tomography.report', compact('tomography'));
     }
-    public function datareport(Request $request){
-        session()->flash('findings', $request->input('findings'));
-        session()->flash('diagnosis', $request->input('diagnosis'));
-        session()->flash('recommendations', $request->input('recommendations'));
-        session()->flash('conclusions', $request->input('conclusions'));
-        return redirect()->route('tomography.pdfreport');
-    }
-    public function pdfreport(Tomography $tomography, Request $request){
-        $patient = $tomography->patient ?? null;
-        $data=[
-            'name_patient' => $patient->name_patient ?? $tomography->name_patient ?? 'No registrado',
-            'ci_patient' => $patient->ci_patient ?? $tomography->ci_patient ?? 'No registrado',
-            'birth_date' => $patient->birth_date ?? 'No disponible',
-            'gender' => $patient->gender ?? 'No disponible',
-            'insurance_code' => $patient->insurance_code ?? 'No disponible',
-            'patient_contact' => $patient->patient_contact ?? 'No disponible',
-            'family_contact' => $patient->family_contact ?? 'No disponible',
-            'tomography_id' => $tomography->tomography_id,
-            'tomography_date' => $tomography->tomography_date,
-            'tomography_type' => $tomography->tomography_type,
-            'tomography_doctor' => $tomography->tomography_doctor,
-            'tomography_charge' => $tomography->tomography_charge,
-            'findings' => request('findings'),
-            'diagnosis' => request('diagnosis'),
-            'recommendations' => request('recommendations'),
-            'conclusions' => request('conclusions'),
-        ];
-        $selectedImage = $request->input('selected_image');
-        $imagePath = null;
-        if ($selectedImage) {
-            $imagePath = storage_path("app/public/tomographies/converted_images/{$tomography->id}/{$selectedImage}");
-        }
-        $pdf = Pdf::loadView('tomography.pdfreport', ['data'=>$data, 'imagePath' => $imagePath,]);
-        return $pdf->download($tomography->name_patient. "_" . $tomography->ci_patient . "_" .$tomography->tomography_id . '_reporte.pdf');
-    }    
     public function superposicion($id){
         $tomography = Tomography::findOrFail($id);
         $folderPath = storage_path('app/public/tomographies/converted_images/' . $tomography->id);
@@ -254,7 +212,7 @@ class TomographyController extends Controller
         }
         return view('tomography.superposicion', compact('tomography', 'images'));
     }
-    public function search(Request $request) {
+    public function search(Request $request){
         $search = $request->input('search');
         $tomographies = Tomography::where('name_patient', 'LIKE', '%' . $search . '%')
                 ->orWhere('tomography_id', 'LIKE', '%' . $search . '%')

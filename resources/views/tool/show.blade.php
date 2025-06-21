@@ -20,9 +20,9 @@
         <button id="draw" class="btnimg" onclick="window.location.href='{{ route('tool.measurements', $tool->id) }}'"><img src="{{ asset('assets/images/draw.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
     </div>
-    <div class="group relative">
-        <button id="report" class="btnimg" onclick="window.location.href='{{ route('tool.report', $tool->id) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
-        <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
+    <div class="group relative ml-5">
+        <button id="report" class="btnimg" onclick="window.location.href='{{ route('report.form', ['type'=>'tool','id'=>$tool->id]) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
     <div class="group relative">
         <button id="downloadImage" class="btnimg"><img src="{{ asset('assets/images/download.png') }}" width="50" height="50"></button>
@@ -45,7 +45,6 @@
     <h3 class="txt2">Carnet de Identidad:</h3><p>{{ $tool->patient->ci_patient }} </p>
     <h3 class="txt2">Fecha de nacimiento:</h3><p>{{ $tool->patient->birth_date }} </p>
     <h3 class="txt2">Genero:</h3><p>{{ $tool->patient->gender }} </p>
-    <h3 class="txt2">Número de asegurado:</h3><p>{{ $tool->patient->insurance_code }} </p>
     <h3 class="txt2">Contacto del paciente:</h3><p>{{ $tool->patient->patient_contact }} </p>
     <h3 class="txt2">Contacto de familiar:</h3><p>{{ $tool->patient->family_contact }} </p>
 </div>
@@ -168,7 +167,7 @@
         const imageUrl = radiographyImage.src;
         const link = document.createElement('a');
         link.href = imageUrl;
-        link.download = 'imagen_paciente.png'; // Nombre sugerido para el archivo
+        link.download = 'Estudio_del_paciente.png';
         link.click();
         link.remove();
     });

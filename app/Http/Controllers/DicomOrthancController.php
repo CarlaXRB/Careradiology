@@ -20,15 +20,12 @@ class DicomOrthancController extends Controller
         $study = $this->orthancService->getStudy($studyId);
         return view('dicomOrthanc.show', compact('study'));
     }
-    
     public function getStudies(){
         return response()->json($this->orthancService->getStudies());
     }
-
     public function getInstances($studyId){
         return response()->json($this->orthancService->getInstances($studyId));
     }
-
     public function getInstanceFile($instanceId){
         return response($this->orthancService->getInstanceFile($instanceId))
                 ->header('Content-Type', 'application/dicom');

@@ -29,7 +29,7 @@ class PatientController extends Controller
     }
     public function update(PatientRequest $request, Patient $patient):RedirectResponse{
         $patient->update($request->all());
-        return redirect()->route('patient.index')->with('success','Datos actualizados');
+        return redirect()->route('patient.index')->with('success','Información actualizada');
     }
     public function destroy(Patient $patient):RedirectResponse{
         $patient->delete();

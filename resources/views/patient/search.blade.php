@@ -15,15 +15,15 @@
 <h1 class="txt-title1">RESULTADOS</h1>
     <div class="grid grid-cols-5 gap-4 border-b border-cyan-500 mb-3">
         <h3 class="txt-head">Carnet de Identidad</h3>
-        <h3 class="txt-head">Código de asegurado</h3>
         <h3 class="txt-head">Nombre del paciente</h3>
+        <h3 class="txt-head">Contacto</h3>
     </div>
     <ul>
         @forelse($patients as $patient)
         <div class="grid grid-cols-5 border-b border-gray-600 gap-4 mb-3 text-white pl-6">
         <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->ci_patient }} </a>
-        <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->insurance_code }} </a>
         <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->name_patient }} </a>
+        <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->patient_contact }} </a>
         <div class="flex justify-end mb-4"><a href="{{ route('patient.edit', $patient->id ) }}" class="botton3"> Editar</a></div>
         <form method="POST" action="{{ route('patient.destroy', $patient->id) }}">
             @csrf

@@ -4,24 +4,19 @@ import os
 import sys
 from PIL import Image
 
-# Verificar que se haya pasado un argumento
 if len(sys.argv) < 2:
     print("Error: No se proporcionó el nombre del archivo DICOM.")
     sys.exit(1)
 
-# Ruta base donde están los archivos DICOM
 base_path = "C:/Users/Gustavo/Desktop/CareRadiologyProject/careradiology/storage/app/public/dicoms/"
-file_name = sys.argv[1]  # Nombre del archivo sin extensión
+file_name = sys.argv[1] 
 
-# Ruta completa del archivo DICOM
 dicom_path = os.path.join(base_path, file_name)
 
-# Verificar que el archivo existe
 if not os.path.exists(dicom_path):
     print(f"Error: El archivo {dicom_path} no existe.")
     sys.exit(1)
 
-# Leer el archivo DICOM
 dataset = pydicom.dcmread(dicom_path)
 
 # Convertir a imagen

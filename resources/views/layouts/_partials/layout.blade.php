@@ -8,6 +8,7 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     <title>@yield('title')</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
 </head>
 <body>
     @include('layouts._partials.messages')

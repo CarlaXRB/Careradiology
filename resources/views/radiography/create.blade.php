@@ -4,7 +4,7 @@
     {{ __('Crear Radiografia') }}
 @endsection
 @section('content')
-<div class="flex justify-end"><a href="{{ route('radiography.index') }}" class="botton1">Atrás</a></div>
+<div class="flex justify-end"><a href="{{ route('radiography.index') }}" class="botton1">Radiografías</a></div>
     <form method="POST" action="{{ route('radiography.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="text-gray-900 dark:text-white">

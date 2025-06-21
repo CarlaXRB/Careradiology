@@ -37,7 +37,7 @@
         img.style.cursor = 'pointer';
         img.style.border = '2px solid transparent';
         
-        if (index === 0) {  // Marcar la primera imagen con borde cyan
+        if (index === 0) { 
             img.style.border = '2px solid cyan';
         }
 

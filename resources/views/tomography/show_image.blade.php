@@ -25,6 +25,14 @@
         <button id="invertColors" class="btnimg"><img src="{{ asset('assets/images/negative.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Negativo</span></div>
     </div>
+        <div class="group relative">
+        <button id="increaseBrightness" class="btnimg"><img src="{{ asset('assets/images/filter3.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Más_Brillo</span></div>
+    </div>
+    <div class="group relative">
+        <button id="decreaseBrightness" class="btnimg"><img src="{{ asset('assets/images/filter4.png') }}" width="50" height="50"></button>
+        <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Menos_Brillo</span></div>
+    </div>
     <div class="group relative">
         <button id="increaseSharpness" class="btnimg"><img src="{{ asset('assets/images/filter1.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-xs text-gray-100">Más_Contraste</span></div>
@@ -62,6 +70,7 @@
 
 <script>
     let zoomLevel = 1;
+    let brightness = 0;
     let initialPosition = { left: '50%', top: '50%' };
     let isDragging = false;
     let startX, startY, initialMouseX, initialMouseY;
@@ -177,7 +186,15 @@
             img.style.filter = img.style.filter.replace(' invert(1)', ''); 
         }
     });
-
+    
+    document.getElementById('increaseBrightness').addEventListener('click', () => {
+        brightness = Math.min(brightness + 0.1, 1);
+        updateFilters();
+    });
+    document.getElementById('decreaseBrightness').addEventListener('click', () => {
+        brightness = Math.max(brightness - 0.1, -1);
+        updateFilters();
+    });
     // Aumentar contraste
     increaseSharpnessButton.addEventListener('click', () => {
         sharpnessLevel += 0.1; 

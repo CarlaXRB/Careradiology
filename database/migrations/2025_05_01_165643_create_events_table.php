@@ -18,15 +18,16 @@ return new class extends Migration
             $table->string('event');
             $table->datetime('start_date');
             $table->datetime('end_date');
+            $table->integer('duration_minutes');
+            $table->enum('room', ['Sala 1', 'Sala 2']);
             $table->string('details')->nullable();
             $table->unsignedBigInteger('patient_id')->nullable();
             $table->unsignedBigInteger('assigned_doctor')->nullable();
             $table->unsignedBigInteger('assigned_radiologist')->nullable();
-            $table->timestamps();
-            
             $table->foreign('patient_id')->references('id')->on('patients')->nullOnDelete();
             $table->foreign('assigned_doctor')->references('id')->on('users')->nullOnDelete();
             $table->foreign('assigned_radiologist')->references('id')->on('users')->nullOnDelete();
+            $table->timestamps();
         });        
     }
 

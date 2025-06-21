@@ -16,10 +16,9 @@ return new class extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
             $table->string('name_patient');
-            $table->unsignedBigInteger('ci_patient');
+            $table->unsignedBigInteger('ci_patient')->unique();
             $table->date('birth_date');
             $table->enum('gender',['masculino','femenino']);
-            $table->string('insurance_code');
             $table->string('patient_contact');
             $table->string('family_contact');
             $table->timestamps();

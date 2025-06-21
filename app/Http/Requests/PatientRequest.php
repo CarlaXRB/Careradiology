@@ -25,8 +25,7 @@ class PatientRequest extends FormRequest
     {
         return [
             'name_patient'=>['max:100','min:3'],
-            'ci_patient'=>['min:5'],
-            'insurance_code'=>['nullable','max:100'],
+            'ci_patient' => ['required', 'numeric', 'unique:patients,ci_patient'],
             'patient_contact'=>['nullable','max:100'],
             'family_contact'=>['nullable','max:100']
         ];

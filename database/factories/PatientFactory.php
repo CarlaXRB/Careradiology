@@ -21,7 +21,6 @@ class PatientFactory extends Factory
             'ci_patient'=>fake()->numberBetween(1000000, 1999999),
             'birth_date'=>fake()->date(),
             'gender'=>fake()->randomElement(['masculino','femenino']),
-            'insurance_code'=>fake()->numberBetween(100,999),
             'patient_contact'=>fake()->numberBetween(60000000, 79999999),
             'family_contact'=>fake()->numberBetween(60000000, 79999999),          
         ];

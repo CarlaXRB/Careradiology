@@ -61,6 +61,7 @@
     <button id="report" class="btnimg" onclick="goToReport()"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
+    
 </div>
 
 <script>
@@ -150,11 +151,12 @@
         console.error("Error al guardar la imagen:", error);
     });
     };
-    function goToReport() {
-        const selectedImage = images[currentIndex];
-        const reportUrl = `{{ route('tomography.report', $tomography->id) }}?image=${encodeURIComponent(selectedImage)}`;
-        window.location.href = reportUrl;
-    }
+function goToReport() {
+    const selectedImage = images[currentIndex];
+    const reportUrl = `{{ route('report.form', ['type'=>'tomography','id'=>$tomography->id]) }}?selected_image=${encodeURIComponent(selectedImage)}`;
+    window.location.href = reportUrl;
+}
+
 </script>
 
 @endsection

@@ -22,8 +22,6 @@
             <option value="masculino">Masculino</option>
             </select>
         </div>
-        <div class="flex items-center mb-4"><label class="txt1">Numero de asegurado:</label><input type="text" name="insurance_code" value="{{ $patient->insurance_code }}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>
-        @error('insurance_code') <p class="error">{{ $message }}</p> @enderror
         <div class="flex items-center mb-4"><label class="txt1">Contacto del paciente:</label><input type="text" name="patient_contact" value="{{ $patient->patient_contact }}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>
         @error('patient_contact') <p class="error">{{ $message }}</p> @enderror
         <div class="flex items-center mb-4"><label class="txt1">Contacto del familiar:</label><input type="text" name="family_contact" value="{{ $patient->family_contact }}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>

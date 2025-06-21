@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Menú Doctor') }}
+            {{ __('Doctor') }}
         </h2>
     </x-slot>
     <div class="py-12">
@@ -18,14 +18,14 @@
                             <img class="mx-auto mb-2" src="{{ asset('assets/images/patient.png') }}" width="175" height="175" alt="Pacientes">
                         </a>
 
-                        <a href="{{ route('radiography.index') }}" class="transform hover:scale-105 transition duration-300 p-6">
+                        <a href="{{ route('radiography.new') }}" class="transform hover:scale-105 transition duration-300 p-6">
                             <h5 class="text-2xl font-semibold mb-4 text-purple-700 dark:text-cyan-300 underline decoration-cyan-400 underline-offset-4">
                                 RADIOGRAFÍAS
                             </h5>
                             <img class="mx-auto mb-2" src="{{ asset('assets/images/rx.png') }}" width="170" height="170" alt="Radiografías">
                         </a>
 
-                        <a href="{{ route('tomography.index') }}" class="transform hover:scale-105 transition duration-300 p-6">
+                        <a href="{{ route('tomography.new') }}" class="transform hover:scale-105 transition duration-300 p-6">
                             <h5 class="text-2xl font-semibold mb-4 text-purple-700 dark:text-cyan-300 underline decoration-cyan-400 underline-offset-4">
                                 TOMOGRAFÍAS
                             </h5>

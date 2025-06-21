@@ -90,9 +90,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dicom-form', [DicomController::class, 'showForm'])->name('dicom.data');
     Route::post('/dicom-upload', [DicomController::class, 'uploadDicom'])->name('dicom.updata');
     Route::get('/dicom-records', [DicomController::class, 'showRecords'])->name('dicom.viewdata');
+    Route::post('/dicom/radiography/save', [DicomController::class, 'saveRadiography'])->name('dicom.saveradiography');
+    Route::post('/dicom/tomography/save', [DicomController::class, 'saveTomography'])->name('dicom.savetomography');
 
-    Route::get('/report/{report}',[ReportController::class,'show'])->name('report.show');
-    Route::post('/report/pdfreport', [ReportController::class, 'pdfreport'])->name('report.pdfreport');
+    Route::get('/report/form/{type}/{id}', [ReportController::class, 'show'])->name('report.form');
+    Route::post('/report/pdf', [ReportController::class, 'generatePDF'])->name('report.pdfreport');
+    Route::get('/report/view/{id}', [ReportController::class, 'view'])->name('report.view');
 
     Route::get('/calendar', [EventController::class, 'calendar'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
@@ -106,7 +109,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');
     Route::get('/dicomor/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile'])->name('orthanc.file');
 });
-
-Route::get('/mailme', [SuscribeController::class, 'mailMe'])->name('mailMe');
 
 Route::get('/dicom', function () {return view('dicom');})->name('dicom');

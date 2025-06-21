@@ -19,7 +19,9 @@ class Radiography extends Model
         return $this->hasMany(Tool::class, 'tool_radiography_id', 'radiography_id');
     }
     public function reports():HasMany{
-        return $this->hasMany(Report::class, 'study_id', 'radiography_id');
+        return $this->hasMany(Report::class, 'report_id', 'radiography_id');
     }
-
+    public function dicoms():HasMany{
+        return $this->hasMany(Tool::class, 'patient_id', 'ci_patient');
+    }
 }

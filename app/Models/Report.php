@@ -16,10 +16,10 @@ class Report extends Model
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }
     public function radiography():BelongsTo{
-        return $this->belongsTo(Radiography::class, 'radiography_id', 'study_id');
+        return $this->belongsTo(Radiography::class, 'radiography_id', 'report_id');
     }
     public function tomography():BelongsTo{
-        return $this->belongsTo(Tomography::class, 'tomography_id', 'study_id');
+        return $this->belongsTo(Tomography::class, 'tomography_id', 'report_id');
     }
     public function tool():BelongsTo{
         return $this->belongsTo(Tool::class, 'ci_patient', 'ci_patient');
