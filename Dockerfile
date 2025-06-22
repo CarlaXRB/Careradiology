@@ -1,44 +1,40 @@
-# Imagen base oficial de PHP con Apache
-FROM php:8.2-apache
+# Usamos PHP 8.1 con Apache como base
+FROM php:8.1-apache
 
-# Instalar dependencias del sistema
+# Instalamos dependencias del sistema necesarias
 RUN apt-get update && apt-get install -y \
+    libpq-dev \
     libzip-dev \
     unzip \
     git \
     curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    libjpeg-dev \
-    libfreetype6-dev \
-    && docker-php-ext-install pdo pdo_mysql zip gd
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip
 
-# Instalar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Instalamos Composer (gestor de dependencias PHP)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar todos los archivos del proyecto
+# Copiamos los archivos de nuestro proyecto al contenedor
 COPY . /var/www/html
 
-# Establecer directorio de trabajo
+# Establecemos el directorio de trabajo
 WORKDIR /var/www/html
 
-# Dar permisos a Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+# Configuramos permisos para storage y bootstrap/cache (necesarios para Laravel)
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Instalar dependencias de Laravel
+# Habilitamos mod_rewrite para URLs amigables en Apache
+RUN a2enmod rewrite
+
+# Opcional: si tienes un archivo de configuración personalizado para Apache,
+# copialo aquí. Si no, este paso puedes quitarlo.
+# COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Instalamos las dependencias PHP con Composer, sin dev para producción
 RUN composer install --no-dev --optimize-autoloader
 
-# Generar APP_KEY automáticamente (opcional, solo si no se pasa como variable)
-# RUN php artisan key:generate
-
-# Configurar Apache para servir desde /public
-RUN echo "DocumentRoot /var/www/html/public" > /etc/apache2/sites-enabled/000-default.conf
-
-# Exponer el puerto
+# Exponemos el puerto 80 para el servidor web
 EXPOSE 80
 
-# Comando de inicio del contenedor
+# Comando para iniciar Apache en primer plano
 CMD ["apache2-foreground"]
