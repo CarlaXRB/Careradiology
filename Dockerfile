@@ -26,9 +26,11 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Habilitamos mod_rewrite para URLs amigables en Apache
 RUN a2enmod rewrite
 
-# Opcional: si tienes un archivo de configuración personalizado para Apache,
-# copialo aquí. Si no, este paso puedes quitarlo.
-# COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+# Copiamos configuración personalizada de Apache
+COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Activamos el sitio Apache con nuestra configuración
+RUN a2ensite 000-default.conf
 
 # Instalamos las dependencias PHP con Composer, sin dev para producción
 RUN composer install --no-dev --optimize-autoloader
