@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests\TomographyRequest;
 use App\Models\Tomography;
+use App\Models\Patient;
 use Imagick;
 use ZipArchive;
 
@@ -21,7 +22,8 @@ class TomographyController extends Controller
         return view('tomography.newtomography');
     }
     public function create():View{
-        return view('tomography.create');
+        $patients = Patient::all();
+        return view('tomography.create', compact('patients'));
     }
     public function tool(Tomography $tomography):View{
         return view('tomography.tool', compact('tomography'));
@@ -30,6 +32,7 @@ class TomographyController extends Controller
         return view('tomography.measurements', compact('tomography'));
     }
     public function store(TomographyRequest $request): RedirectResponse{
+        $patient = Patient::findOrFail($request->patient_id);
         if ($request->hasFile('tomography_file') && $request->file('tomography_file')->getClientOriginalExtension() == 'zip') {
             $zipFile = $request->file('tomography_file');
             $zipFileName = time() . '.' . $zipFile->getClientOriginalExtension();
@@ -54,8 +57,8 @@ class TomographyController extends Controller
             $imageDicomUri = $imageUri;
         }
         $tomography = new Tomography();
-        $tomography->name_patient = $request->name_patient;
-        $tomography->ci_patient = $request->ci_patient;
+        $tomography->name_patient = $patient->name_patient;
+        $tomography->ci_patient = $patient->ci_patient;
         $tomography->tomography_id = $request->tomography_id;
         $tomography->tomography_date = $request->tomography_date;
         $tomography->tomography_type = $request->tomography_type;
@@ -68,13 +71,14 @@ class TomographyController extends Controller
         return redirect()->route('tomography.convert', ['id' => $tomography->id]);
     }
     public function createdcm(): View {
-        return view('tomography.createdcm');
+        $patients = Patient::all();
+        return view('tomography.createdcm', compact('patients'));
     }
     public function storedcm(Request $request): RedirectResponse {
         $request->validate([
             'tomography_folder.*' => 'required|file|mimes:dcm',
         ]);
-        
+        $patient = Patient::findOrFail($request->patient_id);
         $timestamp = time();
         $folderName = "dcm_upload_{$timestamp}";
         $destinationPath = storage_path("app/public/tomographies/images/{$folderName}");
@@ -86,8 +90,10 @@ class TomographyController extends Controller
             $file->move($destinationPath, $fileName);
         }
         $tomography = new Tomography();
-        $tomography->name_patient = $request->name_patient;
-        $tomography->ci_patient = $request->ci_patient;
+        /*$tomography->name_patient = $request->name_patient;
+        $tomography->ci_patient = $request->ci_patient;*/
+        $tomography->name_patient=$patient->name_patient;
+        $tomography->ci_patient=$patient->ci_patient;
         $tomography->tomography_id = $request->tomography_id;
         $tomography->tomography_date = $request->tomography_date;
         $tomography->tomography_type = $request->tomography_type;

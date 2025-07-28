@@ -35,12 +35,6 @@ class AdminSeeder extends Seeder
             'role' => 'radiology',
         ]);
         User::create([
-            'name' => 'Usuario',
-            'email' => 'user@care.com',
-            'password' => Hash::make('user'),
-            'role' => 'user',
-        ]);
-        User::create([
             'name' => 'Recepcionista',
             'email' => 'recepcionista@care.com',
             'password' => Hash::make('recepcionista'),

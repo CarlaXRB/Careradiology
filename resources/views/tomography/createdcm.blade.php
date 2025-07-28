@@ -8,10 +8,17 @@
     <form method="POST" action="{{ route('tomography.storedcm') }}" enctype="multipart/form-data">
         @csrf
         <div class="text-gray-900 dark:text-white">
-        <div class="flex items-center mb-4"><label class="txt1">Nombre del paciente:</label><input type="text" name="name_patient" value="{{ old('name_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
-        @error('name_patient') <p class="error">{{ $message }}</p> @enderror
-        <div class="flex items-center mb-4"><label class="txt1">Carnet de identidad:</label><input type="text" name="ci_patient" value="{{ old('ci_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
-        @error('ci_patient') <p class="error">{{ $message }}</p> @enderror
+        <div class="flex items-center mb-4"><label class="txt1">Nombre del paciente:</label>
+        <!-- <input type="text" name="name_patient" value="{{ old('name_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
+        @error('name_patient') <p class="error">{{ $message }}</p> @enderror-->
+                    <select name="patient_id" class="form-select border-gray-300 dark:border-gray-400 text-black dark:text-black rounded-lg p-2 mt-2 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10">
+                <option value="">-- Selecciona un paciente --</option>
+                @foreach($patients as $patient)
+                    <option value="{{ $patient->id }}" class="text-black" {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
+                        {{ $patient->name_patient }} - CI: {{ $patient->ci_patient }}
+                    </option>
+                @endforeach
+            </select></div> 
         <div class="flex items-center mb-4"><label class="txt1">ID Tomografia:</label><input type="text" name="tomography_id" value="{{ old('tomography_id')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
         @error('tomography') <p class="error">{{ $message }}</p> @enderror
         <div class="flex items-center mb-4"><label class="txt1">Fecha del estudio:</label><input type="date" name="tomography_date" value="{{ old('tomography_date')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>

@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use App\Http\Requests\RadiographyRequest;
 use App\Services\ImageFilterService;
 use App\Models\Radiography;
+use App\Models\Patient;
 use Imagick;
 
 class RadiographyController extends Controller
@@ -25,7 +26,8 @@ class RadiographyController extends Controller
         return view('radiography.newradiography');
     }
     public function create():View{
-        return view('radiography.create');
+        $patients = Patient::all();
+        return view('radiography.create', compact('patients'));
     }
     public function show(Radiography $radiography):View{
         return view('radiography.show', compact('radiography'));
@@ -37,6 +39,7 @@ class RadiographyController extends Controller
         return view('radiography.measurements', compact('radiography'));
     }
     public function store(RadiographyRequest $request):RedirectResponse{
+        $patient = Patient::findOrFail($request->patient_id);
         $dicomFile = $request->file('radiography_file');
         $dicomFileName = time() . '.' . $dicomFile->getClientOriginalExtension();
         $dicomFilePath = $dicomFile->storeAs('public/radiographies', $dicomFileName);
@@ -52,8 +55,8 @@ class RadiographyController extends Controller
         $imagick->destroy();
 
         $radiography=new Radiography;
-        $radiography->name_patient=$request->name_patient;
-        $radiography->ci_patient=$request->ci_patient;
+        $radiography->name_patient=$patient->name_patient;
+        $radiography->ci_patient=$patient->ci_patient;
         $radiography->radiography_id=$request->radiography_id;
         $radiography->radiography_date=$request->radiography_date;
         $radiography->radiography_type=$request->radiography_type;

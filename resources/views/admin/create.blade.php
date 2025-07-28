@@ -22,7 +22,6 @@
             <div class="mt-4">
                 <x-label for="rol" value="{{ __('Rol') }}" />
                 <select id="rol" name="rol" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600" required>
-                    <option value="user" {{ old('rol') == 'user' ? 'selected' : '' }}>Usuario</option>
                     <option value="doctor" {{ old('rol') == 'doctor' ? 'selected' : '' }}>Doctor</option>
                     <option value="recepcionist" {{ old('rol') == 'recepcionist' ? 'selected' : '' }}>Recepcionista</option>
                     <option value="radiology" {{ old('rol') == 'radiology' ? 'selected' : '' }}>Radiologo</option>

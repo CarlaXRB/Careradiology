@@ -29,6 +29,6 @@
             </div>
         </div>
         <div class="copyright">
-            <p>2024 Todos los servicios reservados. Desarrollado por Carla Ximena Rendon Blanco</p>
+            <p>2025© Todos los servicios reservados. Desarrollado por Carla Ximena Rendon Blanco</p>
         </div>
     </footer>
