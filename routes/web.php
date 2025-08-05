@@ -52,6 +52,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/radiography/{radiography}/pdfreport', [RadiographyController::class, 'pdfreport'])->name('radiography.pdfreport');
     Route::post('/radiography/{radiography}/apply-filters', [RadiographyController::class, 'applyFilters'])->name('radiography.applyFilters');
     Route::post('/radiography/search',[RadiographyController::class, 'search'])->name('radiography.search');
+    Route::delete('/radiography/destroy/{radiography}',[RadiographyController::class, 'destroy'])->name('radiography.destroy');
+
 
     Route::get('/new-tomography',[TomographyController::class,'new'])->name('tomography.new');
     Route::get('/tomography',[TomographyController::class,'index'])->name('tomography.index');
@@ -68,6 +70,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/tomography/search',[TomographyController::class, 'search'])->name('tomography.search');
     Route::get('/tomography/dcm/create', [TomographyController::class, 'createdcm'])->name('tomography.createdcm');
     Route::post('/tomography/dcm/store', [TomographyController::class, 'storedcm'])->name('tomography.storedcm');
+    Route::delete('/tomography/destroy/{tomography}',[tomographyController::class, 'destroy'])->name('tomography.destroy');
 
     Route::get('/tool',[ToolController::class,'index'])->name('tool.index');
     Route::post('/tool/new/tool/{tomography_id}/{ci_patient}/{id}', [ToolController::class, 'new'])->name('tool.new');
@@ -100,7 +103,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/calendar', [EventController::class, 'calendar'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
-    Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::put('/events/{event}/update', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/destroy/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
     Route::get('/view-dicom/studies', [DicomOrthancController::class, 'index'])->name('orthanc.index');
     Route::get('/view-dicom/study/{studyId}', [DicomOrthancController::class, 'show'])->name('orthanc.show');

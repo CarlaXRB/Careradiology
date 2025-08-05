@@ -61,7 +61,19 @@
     <button id="report" class="btnimg" onclick="goToReport()"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
-    
+</div>
+<div>
+    @auth
+    @if(Auth::user()->role === 'admin')  
+    <div>       
+        <form method="POST" action="{{ route('tomography.destroy', $tomography->id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este estudio?');">
+            @csrf
+            @method('Delete')
+            <div class="flex justify-center mb-8"><input type="submit" value="Eliminar" class="botton2"/></div>
+        </form>
+    </div>
+    @endif
+@endauth
 </div>
 
 <script>

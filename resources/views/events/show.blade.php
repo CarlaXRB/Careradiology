@@ -24,6 +24,21 @@
     <h3 class="txt2">Sala:</h3><p>{{ $event->room }}</p>
     <h3 class="txt2">Doctor:</h3><p>{{ $event->assignedDoctor->name ?? 'No asignado' }}</p>
     <h3 class="txt2">Radiólogo:</h3><p>{{ $event->assignedRadiologist->name ?? 'No asignado' }}</p>
-    <h3 class="txt2">Detalles:</h3><p class="mb-8">{{ $event->details ?? 'No hay detalles' }}</p>
+    <h3 class="txt2">Detalles:</h3><p>{{ $event->details ?? 'No hay detalles' }}</p>
+    <h3 class="txt2">Creado por:</h3><p class="mb-8">{{ $event->creator->name ?? 'Sin información' }}</p>
 </div>
+    <div>
+        <div class="flex justify-center mb-4"><a href="{{ route('events.edit', $event->id ) }}" class="botton3"> Editar</a></div>
+    </div>
+@auth
+    @if(Auth::user()->role === 'admin')  
+    <div>       
+        <form method="POST" action="{{ route('events.destroy', $event->id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta cita?');">
+            @csrf
+            @method('Delete')
+            <div class="flex justify-center mb-8"><input type="submit" value="Eliminar" class="botton2"/></div>
+        </form>
+    </div>
+    @endif
+@endauth
 @endsection

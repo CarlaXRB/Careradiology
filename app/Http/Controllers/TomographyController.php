@@ -225,4 +225,8 @@ class TomographyController extends Controller
                 ->orWhere('ci_patient', 'LIKE', '%' . $search . '%')->get();
         return view('tomography.search', compact('tomographies'));
     }
+    public function destroy(Tomography $tomography){
+        $tomography->delete();
+        return redirect()->route('tomography.index')->with('danger','Estudio eliminado');
+    }
 }

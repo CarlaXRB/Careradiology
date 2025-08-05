@@ -78,4 +78,8 @@ class RadiographyController extends Controller
                 ->orWhere('ci_patient', 'LIKE', '%' . $search . '%')->get();
         return view('radiography.search', compact('radiographies'));
     }
+    public function destroy(Radiography $radiography){
+        $radiography->delete();
+        return redirect()->route('radiography.index')->with('danger','Estudio eliminado');
+    }
 }
