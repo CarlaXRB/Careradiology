@@ -12,6 +12,15 @@ class Radiography extends Model
     use HasFactory;
     protected $guarded=[];
 
+    public function setRadiographyTypeAttribute($value){
+        $this->attributes['radiography_type'] = ucwords(strtolower($value));
+    }
+    public function setRadiographyDoctorAttribute($value){
+        $this->attributes['radiography_doctor'] = ucwords(strtolower($value));
+    }
+    public function setRadiographyChargeAttribute($value){
+        $this->attributes['radiography_charge'] = ucwords(strtolower($value));
+    }
     public function patient():BelongsTo{
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }

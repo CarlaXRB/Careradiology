@@ -17,12 +17,19 @@ class DicomController extends Controller
     }
     public function uploadFormTomography(){
         return view('dicom.uploadTomography');
-        }
+    }
     public function processDicom(Request $request){
         $request->validate([
             'file' => 'required|file'
         ]);
         $file = $request->file('file');
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, ['', 'dcm'])) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['file' => 'El archivo no es correcto. Solo se permiten archivos DICOM (.dcm) o sin extensión.']);
+        }
+
         $fileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $filePath = $file->storeAs('public/dicoms', $fileName);
 
@@ -52,6 +59,7 @@ class DicomController extends Controller
         $requestedProcedureDescription = isset($dicomInfo[3280992]) ? $extractLoValue($dicomInfo[3280992]) : '';
         $referringPhysicianName = isset($dicomInfo[3280946]) ? $extractLoValue($dicomInfo[3280946]) : '';
         $operatorsName = isset($dicomInfo[528496]) ? $extractLoValue($dicomInfo[528496]) : '';
+        $performingPhysicianName = isset($dicomInfo[528528]) ? $extractLoValue($dicomInfo[528528]) : '';
 
         $finalDicomData = [
             'patient_name' => $dicomData['patient_name'] ?? '',
@@ -63,6 +71,7 @@ class DicomController extends Controller
             'requested_procedure_description' => $requestedProcedureDescription,
             'referring_physician_name' => $referringPhysicianName,
             'operators_name' => $operatorsName,
+            'performing_physician_name' => $performingPhysicianName,
             'dicom_info' => $dicomInfo,
         ];
 
@@ -244,7 +253,9 @@ class DicomController extends Controller
             'radiography_dicom_uri' => $radiographyDicomUri,
             'radiography_doctor' => $dicomData['referring_physician_name'] ?? 'NA',
             'radiography_charge' => $dicomData['operators_name'] ?? 'NA',
+            //'radiography_performing' => $dicomData['performing_physician_name'] ?? 'NA', 
         ]);
+
 
         session()->forget(['dicom_data', 'image_url', 'file_name']);
         return redirect()->route('radiography.index')->with('success', 'Estudio guardado correctamente.');
@@ -265,6 +276,7 @@ class DicomController extends Controller
         $tomography->tomography_type = $dicomData['requested_procedure_description'] ?? 'Tomografía';
         $tomography->tomography_doctor = $dicomData['referring_physician_name'] ?? 'NA';
         $tomography->tomography_charge = $dicomData['operators_name'] ?? 'NA';
+        //$tomography->tomography_performing = $dicomData['performing_physician_name'] ?? 'NA';
         $tomography->save();
 
         $generatedFolderName = 'converted_images/' . $tomography->id;

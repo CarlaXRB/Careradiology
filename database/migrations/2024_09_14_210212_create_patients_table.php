@@ -17,10 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('name_patient');
             $table->unsignedBigInteger('ci_patient')->unique();
+            $table->string('email')->unique();
             $table->date('birth_date');
             $table->enum('gender',['masculino','femenino']);
-            $table->string('patient_contact');
-            $table->string('family_contact');
+            $table->integer('patient_contact');
+            $table->integer('family_contact');
             $table->timestamps();
         });
     }

@@ -62,7 +62,7 @@
 <div class="flex justify-center mb-4"><button id="clearButton" class="botton3">Limpiar</button></div>
 
 <div class="flex justify-end mb-[30px] mr-[30px]">
-    <a href="{{ route('tool.search',$tool->id)}}" class="botton2">Herramientas usadas</a>
+    <a href="{{ route('tool.search',$tool->id)}}" class="botton2">Herramientas aplicadas</a>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>

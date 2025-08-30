@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-    public function show(Request $request, $type, $id){
+    public function show(Request $request, $type, $id, $name, $ci){
         $selectedImage = $request->query('selected_image', null);
 
         if ($type === 'radiography') {
@@ -31,6 +31,8 @@ class ReportController extends Controller
             'patient' => $patient,
             'selectedImage' => $selectedImage,
             'studyType' => $type,
+            'name'=>$name,
+            'ci'=>$ci
         ]);
     }
     public function generatePDF(Request $request){

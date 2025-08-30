@@ -25,6 +25,23 @@ class TomographyController extends Controller
         $patients = Patient::all();
         return view('tomography.create', compact('patients'));
     }
+    public function edit(Tomography $tomography):View{
+        $patients = Patient::all();
+        return view('tomography.edit', compact('tomography','patients'));
+    }
+    public function update(TomographyRequest $request, Tomography $tomography):RedirectResponse{
+        $patient = Patient::findOrFail($request->patient_id);
+        $tomography->name_patient=$patient->name_patient;
+        $tomography->ci_patient=$patient->ci_patient;
+        $tomography->update([
+            'tomography_id' => $request->input('tomography_id'),
+            'tomography_date' => $request->input('tomography_date'),
+            'tomography_type' => $request->input('tomography_type'),
+            'tomography_doctor' => $request->input('tomography_doctor'),
+            'tomography_charge' => $request->input('tomography_charge'),
+        ]);
+        return redirect()->route('tomography.index')->with('success','Información actualizada');
+    }
     public function tool(Tomography $tomography):View{
         return view('tomography.tool', compact('tomography'));
     }

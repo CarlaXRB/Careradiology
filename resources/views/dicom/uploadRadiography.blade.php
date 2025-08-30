@@ -10,13 +10,18 @@
     <p class="text-[17px] p-5">Aquí puedes subir archivos en formato <b>DICOM</b> para su procesamiento y análisis. 
         Nuestro sistema extraerá y mostrará los metadatos relevantes, facilitando la gestión de imágenes radiológicas.</p>
         <form action="{{ route('process.dicom') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-        @csrf
-        <div class="flex justify-center">
-            <input type="file" name="file" required class="border border-cyan-300 rounded-md p-5">
-        </div>
-        <div class="flex justify-center p-4">
-            <button type="submit" class="botton2">Subir Archivo</button>
-        </div>
-    </form>
+            @csrf
+            <div class="flex justify-center">
+                <input type="file" name="file" required class="border border-cyan-300 rounded-md p-5">
+            </div>
+            <div class="ml-8">           
+                @error('file')
+                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+            @enderror
+            </div>
+            <div class="flex justify-center p-4">
+                <button type="submit" class="botton2">Subir Archivo</button>
+            </div>
+        </form>
 </div>
 @endsection

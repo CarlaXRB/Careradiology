@@ -9,6 +9,12 @@ class Event extends Model
 {
     use HasFactory;
     protected $guarded=[];
+    public function setEventAttribute($value){
+        $this->attributes['event'] = ucwords(strtolower($value));
+    }
+    public function setDetailsAttribute($value){
+        $this->attributes['details'] = ucfirst(strtolower($value));
+    }
     public function assignedDoctor(){
         return $this->belongsTo(User::class, 'assigned_doctor');
     }

@@ -84,14 +84,17 @@
             solicitado por {{ $study->tomography_doctor }}
             realizado por el radiólogo {{ $study->tomography_charge }}.
         @elseif ($studyType === 'tool')
-        <strong>Estudio</strong> del tipo {{ $study->radiography->radiography_type ?? $study->tomography->tomography_type }} con
+        <strong>Radiológico</strong> del tipo {{ $study->radiography->radiography_type ?? $study->tomography->tomography_type }} con
             ID de estudio {{ $study->radiography->radiography_id ?? $study->tomography->tomography_id }}
             en fecha {{ $study->tool_date }}
             solicitado por {{ $study->radiography->radiography_doctor ?? $study->tomography->tomography_doctor }}
             realizado por el radiólogo {{ $study->radiography->radiography_charge ?? $study->tomography->tomography_charge }}.
         @endif
     </p>
-    <p>En este estudio se encontró {{ $findings }} con un diagnóstico {{ $diagnosis }}, llegando a las conclusiones {{ $conclusions }} y las recomendaciones {{ $recommendations }}.</p>
+    <p><strong>Hallazgos:</strong> {{ $findings }} </p>
+    <p><strong>Impresión diagnóstica:</strong> {{ $diagnosis }}</p>
+    <p><strong>Conclusiones:</strong> {{ $conclusions }}</p>
+    <p><strong>Recomendaciones:</strong> {{ $recommendations }}</p>
 
     @if (isset($imagePath) && $imagePath && file_exists($imagePath))
         <div class="section" style="text-align: center;">

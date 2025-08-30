@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Requests\PatientRequest;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Patient;
+use App\Models\User;
 
 class PatientController extends Controller
 {
@@ -18,7 +20,14 @@ class PatientController extends Controller
         return view('patient.create');
     }
     public function store(PatientRequest $request):RedirectResponse{
-        Patient::create($request->all());
+        $patient = Patient::create($request->all());
+        User::create([
+            'name' => $patient->name_patient,
+            'email' => $patient->email,
+            'password' => Hash::make($patient->ci_patient),
+            'role' => 'user',
+        ]);
+
         return redirect()->route('patient.index')->with('success','Paciente creado');
     }
     public function show(Patient $patient):View{

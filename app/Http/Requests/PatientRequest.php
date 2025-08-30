@@ -23,11 +23,15 @@ class PatientRequest extends FormRequest
      */
     public function rules()
     {
+        $patientId = $this->route('patient')?->id ?? null;
         return [
-            'name_patient'=>['max:100','min:3'],
-            'ci_patient' => ['required', 'numeric', 'unique:patients,ci_patient'],
-            'patient_contact'=>['nullable','max:100'],
-            'family_contact'=>['nullable','max:100']
+            'name_patient' => 'required|string|max:100|min:3',
+            'ci_patient' => 'required|numeric|unique:patients,ci_patient,' . $patientId,
+            'email' => 'required|email|unique:patients,email,' . $patientId,
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:masculino,femenino',
+            'patient_contact' => 'required|numeric',
+            'family_contact' => 'nullable|numeric',
         ];
     }
 }

@@ -12,11 +12,14 @@
     @error('name_patient') <p class="error">{{ $message }}</p> @enderror
     <div class="flex items-center mb-4"><label class="txt1">Carnet de identidad:</label><input type="text" name="ci_patient" value="{{ old('ci_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>
     @error('ci_patient') <p class="error">{{ $message }}</p> @enderror
+    <div class="flex items-center mb-4"><label class="txt1">Correo electronico:</label><input type="text" name="email" value="{{ old('email')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>
+    @error('email') <p class="error">{{ $message }}</p> @enderror
     <div class="flex items-center mb-4"><label class="txt1">Fecha de naciemiento:</label><input type="date" name="birth_date" value="{{ old('birth_date')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></br></div>
     @error('birth_date') <p class="error">{{ $message }}</p> @enderror
     <div class="flex items-center mb-4">
     <label class="txt1">Género:</label>
     <select name="gender" class="form-select border-gray-300 dark:border-gray-400 text-black dark:text-black rounded-lg p-2 mt-2 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10">
+        <option value="">-- Selecciona el género --</option>
         <option value="femenino" class="text-black">Femenino</option>
         <option value="masculino" class="text-black">Masculino</option>
     </select>

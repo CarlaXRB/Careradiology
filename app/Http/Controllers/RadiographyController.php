@@ -29,6 +29,23 @@ class RadiographyController extends Controller
         $patients = Patient::all();
         return view('radiography.create', compact('patients'));
     }
+    public function edit(Radiography $radiography):View{
+        $patients = Patient::all();
+        return view('radiography.edit', compact('radiography','patients'));
+    }
+    public function update(RadiographyRequest $request, Radiography $radiography):RedirectResponse{
+        $patient = Patient::findOrFail($request->patient_id);
+        $radiography->name_patient=$patient->name_patient;
+        $radiography->ci_patient=$patient->ci_patient;
+        $radiography->update([
+            'radiography_id' => $request->input('radiography_id'),
+            'radiography_date' => $request->input('radiography_date'),
+            'radiography_type' => $request->input('radiography_type'),
+            'radiography_doctor' => $request->input('radiography_doctor'),
+            'radiography_charge' => $request->input('radiography_charge'),
+        ]);
+        return redirect()->route('radiography.index')->with('success','Información actualizada');
+    }
     public function show(Radiography $radiography):View{
         return view('radiography.show', compact('radiography'));
     }

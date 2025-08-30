@@ -70,6 +70,7 @@ class EventController extends Controller
                 'end'   => date('Y-m-d\TH:i:s', strtotime($event->end_date)),
                 'room' => $event->room,
                 'allDay' => false,
+                'creator_name' => $event->creator->name ?? 'Sin información',
             ];            
         }        
         return view('events.index',compact('events'));
@@ -99,7 +100,6 @@ class EventController extends Controller
             'assigned_radiologist' => $request->assigned_radiologist ?: $request->custom_radiologist,
             'patient_id' => $request->patient_id,
         ]);
-
         return redirect()->route('events.index')->with('success', 'Información actualizada');
     }
     public function destroy(Event $event){

@@ -21,7 +21,7 @@
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Mediciones</span></div>
     </div>
     <div class="group relative ml-5">
-        <button id="report" class="btnimg" onclick="window.location.href='{{ route('report.form', ['type'=>'tool','id'=>$tool->id]) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
+        <button id="report" class="btnimg" onclick="window.location.href='{{ route('report.form', ['type'=>'tool','id'=>$tool->id, 'name'=>$tool->ci_patient,'ci'=>$tool->ci_patient]) }}'"><img src="{{ asset('assets/images/report.png') }}" width="50" height="50"></button>
         <div class="hidden group-hover:block absolute left-0 mt-2 bg-gray-500 bg-opacity-50 text-center rounded-md px-2 py-1"><span class="text-sm text-gray-100">Reporte</span></div>
     </div>
     <div class="group relative">

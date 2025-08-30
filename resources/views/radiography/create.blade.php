@@ -4,15 +4,11 @@
     {{ __('Crear Radiografia') }}
 @endsection
 @section('content')
-<div class="flex justify-end"><a href="{{ route('radiography.index') }}" class="botton1">Radiografías</a></div>
+<div class="flex justify-end"><a href="{{ route('dashboard') }}" class="botton1">Inicio</a></div>
     <form method="POST" action="{{ route('radiography.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="text-gray-900 dark:text-white">
         <div class="flex items-center mb-4"><label class="txt1">Nombre del paciente:</label>
-        <!-- <input type="text" name="name_patient" value="{{ old('name_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div> 
-         @error('name_patient') <p class="error">{{ $message }}</p> @enderror 
-        <div class="flex items-center mb-4"><label class="txt1">Carnet de identidad:</label><input type="text" name="ci_patient" value="{{ old('ci_patient')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
-        @error('ci_patient') <p class="error">{{ $message }}</p> @enderror -->
             <select name="patient_id" class="form-select border-gray-300 dark:border-gray-400 text-black dark:text-black rounded-lg p-2 mt-2 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10">
                 <option value="">-- Selecciona un paciente --</option>
                 @foreach($patients as $patient)
@@ -21,6 +17,10 @@
                     </option>
                 @endforeach
             </select></div> 
+        <div class="flex justify-end">
+            <p>¿Paciente no registrado?</p>
+            <div class="ml-5 mb-5 mr-8"><a href="{{ route('patient.create')}}" class="botton3">Registrar Paciente</a></div>
+        </div>
         <div class="flex items-center mb-4"><label class="txt1">ID Radiografia:</label><input type="text" name="radiography_id" value="{{ old('radiography_id')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
         @error('radiography') <p class="error">{{ $message }}</p> @enderror
         <div class="flex items-center mb-4"><label class="txt1">Fecha del estudio:</label><input type="date" name="radiography_date" value="{{ old('radiography_date')}}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('dicoms', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name')->nullable();;  // Nombre del archivo original
-            $table->string('image_url')->nullable();;  // URL de la imagen generada
+            $table->string('file_name')->nullable();
+            $table->string('image_url')->nullable();
             $table->string('patient_name')->nullable();
             $table->string('patient_id')->nullable();
             $table->string('modality')->nullable();

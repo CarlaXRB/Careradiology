@@ -11,6 +11,16 @@ class Tomography extends Model
 {
     use HasFactory;
     protected $guarded=[];
+
+    public function setTomographyTypeAttribute($value){
+        $this->attributes['tomography_type'] = ucwords(strtolower($value));
+    }
+    public function setTomographyDoctorAttribute($value){
+        $this->attributes['tomography_doctor'] = ucwords(strtolower($value));
+    }
+    public function setTomographyChargeAttribute($value){
+        $this->attributes['tomography_charge'] = ucwords(strtolower($value));
+    }
     public function patient():BelongsTo{
         return $this->belongsTo(Patient::class, 'ci_patient', 'ci_patient');
     }

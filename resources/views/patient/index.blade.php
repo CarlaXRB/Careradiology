@@ -13,23 +13,28 @@
     <div class="flex justify-end"><a href="{{route('patient.create')}}" class="botton1">Crear Paciente</a> </div>
 </div>
 <h1 class="txt-title1">PACIENTES</h1>
-<div class="grid grid-cols-5 gap-4 border-b border-cyan-500 mb-3">
+<div class="grid grid-cols-4 gap-4 border-b border-cyan-500 mb-3">
     <h3 class="txt-head">Carnet de Identidad</h3>
     <h3 class="txt-head">Nombre del paciente</h3>
     <h3 class="txt-head">Contacto</h3>
 </div>
 <ul>
     @forelse($patients as $patient)
-    <div class="grid grid-cols-5 border-b border-gray-600 gap-4 mb-3 text-white pl-6">
-    <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->ci_patient }} </a>
-    <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->name_patient }} </a>
-    <a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->patient_contact }} </a>
-    <div class="flex justify-end mb-4"><a href="{{ route('patient.edit', $patient->id ) }}" class="botton3"> Editar</a></div>
-    <form method="POST" action="{{ route('patient.destroy', $patient->id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este paciente?');">
-        @csrf
-        @method('Delete')
-        <div class="flex justify-end"><input type="submit" value="Eliminar" class="botton2"/></div>
-    </form>
+    <div class="flex justify-center grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6">
+        <div class="ml-8"><a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->ci_patient }} </a></div>
+        <div class="ml-8"><a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->name_patient }} </a></div>
+        <div class="ml-8"><a href="{{ route('patient.show', $patient->id) }}"> {{ $patient->patient_contact }} </a></div>
+        <div class="flex justify-center mb-4"><a href="{{ route('patient.edit', $patient->id ) }}" class="botton3"> Editar</a>
+        @auth
+            @if(Auth::user()->role === 'admin')  
+            <form method="POST" action="{{ route('patient.destroy', $patient->id) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este paciente?');">
+                @csrf
+                @method('Delete')
+                <div class="flex justify-end"><input type="submit" value="Eliminar" class="botton2"/></div>
+            </form>
+            @endif
+        @endauth
+        </div>
     </div>
     @empty
     <p>No data</p>

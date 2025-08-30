@@ -14,12 +14,11 @@
     <h2 class="txt-title2">Información del Paciente</h2>
     <div class="grid grid-cols-2 gap-4">
         <h2 class="txt2">Paciente:</h2> <p> {{ $dicomData['patient_name'] }}</p>
-        <h2 class="txt2">ID del Paciente:</h2> <p> {{ $dicomData['patient_id'] }}</p>
+        <h2 class="txt2">ID del estudio:</h2> <p> {{ $dicomData['patient_id'] }}</p>
         <h2 class="txt2">Modalidad:</h2> <p> {{ $dicomData['modality'] }}</p>
         <h2 class="txt2">Fecha del Estudio:</h2> <p> {{ $dicomData['study_date'] }}</p>
-        <h2 class="txt2">Tamaño de la imagen:</h2> <p> {{ $dicomData['rows'] }}x{{ $dicomData['columns'] }}</p>
     </div>
-    <div class="flex justify-center mt-5 mb-3"><h1>Para guardar el estudio del paciente, selecciona su registro:</h1></div>
+    <div class="flex justify-start mt-8 ml-12 mb-3"><h1 class="txt3">Para guardar el estudio del paciente, selecciona su registro:</h1></div>
     <form method="POST" action="{{ route('dicom.saveradiography') }}">
         @csrf
         <div class="flex items-center mb-4">
@@ -32,6 +31,10 @@
                     </option>
                 @endforeach
             </select>
+        </div>
+        <div class="flex justify-end">
+            <p>¿Paciente no registrado?</p>
+            <div class="ml-5 mb-5 mr-8"><a href="{{ route('patient.create')}}" class="botton2">Registrar Paciente</a></div>
         </div>
         <div class="flex justify-center mt-5"><button type="submit" class="botton3">Guardar</button></div>
     </form>

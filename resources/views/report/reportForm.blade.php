@@ -26,8 +26,8 @@
         </div>
         @else
         <div class="grid grid-cols-2 gap-4 text-gray-900 dark:text-white">
-            <h3 class="txt2">Nombre del paciente:</h3><p>{{ $study->name_patient ?? 'N/A' }} </p>
-            <h3 class="txt2">Carnet de Identidad:</h3><p>{{ $study->ci_patient ?? 'N/A' }} </p>
+            <h3 class="txt2">Nombre del paciente:</h3><p>{{ $name ?? 'N/A' }} </p>
+            <h3 class="txt2">Carnet de Identidad:</h3><p>{{ $ci ?? 'N/A' }} </p>
         </div>
         <h1 class="flex justify-center text-red-500 mt-5 ml-10 mb-5">Paciente no registrado en la base de datos.</h1>
         @endif

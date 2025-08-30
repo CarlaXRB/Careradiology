@@ -11,6 +11,15 @@ class Patient extends Model
     use HasFactory;
     protected $guarded=[];
 
+    public function setNamePatientAttribute($value){
+        $this->attributes['name_patient'] = ucwords(strtolower($value));
+    }
+    public function setEmailAttribute($value){
+        $this->attributes['email'] = strtolower($value);
+    }
+    public function user(){
+        return $this->hasOne(User::class, 'email', 'email');
+    }
     public function radiographies():HasMany{
         return $this->hasMany(Radiography::class, 'ci_patient', 'ci_patient');
     }

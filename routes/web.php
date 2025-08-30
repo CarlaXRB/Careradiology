@@ -5,13 +5,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RadiographyController;
 use App\Http\Controllers\TomographyController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\SuscribeController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DicomController;
 use App\Http\Controllers\DicomOrthancController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ConnectionController;
+use App\Models\Patient;
 
 Route::get('/', function () {return view('welcome');});
 
@@ -28,8 +29,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             return view('dashboard.admin');
         } elseif ($user->role === 'radiology') {
             return view('dashboard.radiology');
+        } elseif ($user->role === 'user') {
+            $patient = Patient::where('email', $user->email)->first();
+            if (!$patient) {
+                return view('dashboard.user')->with('error', 'No tienes información de paciente asociada.');
+            }
+            return view('dashboard.user', compact('patient'));
         } else {
-            return view('dashboard.user');
+            abort(403, 'Rol no permitido.');
         }
     })->name('dashboard');
     
@@ -40,11 +47,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('admin/users/new', [AdminUserController::class, 'store'])->name('admin.store');
     Route::get('admin/users/list', [AdminUserController::class, 'index'])->name('admin.users');
     Route::delete('/admin/destroy/{user}', [AdminUserController::class, 'destroy'])->name('admin.destroy');
+    Route::get('/data', [AdminUserController::class, 'data'])->name('admin.data');
 
     Route::get('/new-radiography',[RadiographyController::class,'new'])->name('radiography.new');
     Route::get('/radiography',[RadiographyController::class,'index'])->name('radiography.index');
     Route::get('/radiography/create',[RadiographyController::class,'create'])->name('radiography.create');
     Route::post('/radiography/store',[RadiographyController::class,'store'])->name('radiography.store');
+    Route::get('/radiography/edit/{radiography}', [RadiographyController::class, 'edit'])->name('radiography.edit');
+    Route::put('/radiography/update/{radiography}', [RadiographyController::class, 'update'])->name('radiography.update');
     Route::get('/radiography/show/{radiography}',[RadiographyController::class,'show'])->name('radiography.show');
     Route::get('/radiography/tool/{radiography}',[RadiographyController::class,'tool'])->name('radiography.tool');
     Route::get('/radiography/measurements/{radiography}',[RadiographyController::class,'measurements'])->name('radiography.measurements');
@@ -59,6 +69,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/tomography',[TomographyController::class,'index'])->name('tomography.index');
     Route::get('/tomography/create',[TomographyController::class,'create'])->name('tomography.create');
     Route::post('/tomography/store',[TomographyController::class,'store'])->name('tomography.store');
+    Route::get('/tomography/edit/{tomography}', [TomographyController::class, 'edit'])->name('tomography.edit');
+    Route::put('/tomography/update/{tomography}', [TomographyController::class, 'update'])->name('tomography.update');
     Route::get('/tomography/tool/{tomography}',[TomographyController::class,'tool'])->name('tomography.tool');
     Route::get('/tomography/measurements/{tomography}',[TomographyController::class,'measurements'])->name('tomography.measurements');
     Route::get('/tomography/report/{tomography}',[TomographyController::class,'report'])->name('tomography.report');
@@ -96,7 +108,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/dicom/radiography/save', [DicomController::class, 'saveRadiography'])->name('dicom.saveradiography');
     Route::post('/dicom/tomography/save', [DicomController::class, 'saveTomography'])->name('dicom.savetomography');
 
-    Route::get('/report/form/{type}/{id}', [ReportController::class, 'show'])->name('report.form');
+    Route::get('/report/form/{type}/{id}/{name}/{ci}', [ReportController::class, 'show'])->name('report.form');
     Route::post('/report/pdf', [ReportController::class, 'generatePDF'])->name('report.pdfreport');
     Route::get('/report/view/{id}', [ReportController::class, 'view'])->name('report.view');
 
@@ -114,6 +126,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dicomor/studies', [DicomOrthancController::class, 'getStudies'])->name('orthanc.studies');
     Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');
     Route::get('/dicomor/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile'])->name('orthanc.file');
+
+    Route::get('/conexion-equipo', [ConnectionController::class, 'index'])->name('conexion.equipo');
+    Route::get('/conexion-equipo/{id}', [ConnectionController::class, 'show'])->name('conexion.show');
+    Route::get('/conexion-equipo/check', [ConnectionController::class, 'check'])->name('conexion.check');
 });
 
 Route::get('/dicom', function () {return view('dicom');})->name('dicom');

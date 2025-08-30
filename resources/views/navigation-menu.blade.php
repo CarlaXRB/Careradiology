@@ -95,25 +95,28 @@
                             <div class="block px-4 py-2 text-xs text-gray-400">
                                 {{ __('views.Manage Account') }}
                             </div>
-
+                            @if (Auth::user()->role !== 'user') 
                             <x-dropdown-link href="{{ route('profile.show') }}">
                                 {{ __('views.Profile') }}
                             </x-dropdown-link>
+                            @endif
+                            @if (Auth::user()->role === 'admin') 
+                                    <x-dropdown-link href="{{ route('admin.users') }}">
+                                        {{ __('Usuarios') }}
+                                    </x-dropdown-link>
+                                @endif
+                                @if (Auth::user()->role === 'admin') 
+                                    <x-dropdown-link href="{{ route('admin.data') }}">
+                                        {{ __('Resumen del sistema') }}
+                                    </x-dropdown-link>
+                                @endif
 
+                            <div class="border-t border-gray-200 dark:border-gray-600"></div>
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
                                     {{ __('API Tokens') }}
                                 </x-dropdown-link>
                             @endif
-
-                            <div class="border-t border-gray-200 dark:border-gray-600"></div>
-
-                                <!-- Registrar usuario (visible solo para administradores) -->
-                                @if (Auth::user()->role === 'admin') 
-                                    <x-dropdown-link href="{{ route('admin.users') }}">
-                                        {{ __('Usuarios') }}
-                                    </x-dropdown-link>
-                                @endif
 
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}" x-data>
