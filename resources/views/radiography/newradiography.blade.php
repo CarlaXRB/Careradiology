@@ -31,11 +31,4 @@
         <p>Listado de radiografías subidas</p>
     </a>
 </div>
-@auth
-    @if(in_array(Auth::user()->role, ['admin', 'radiology'])) 
-    <div class="flex justify-center" style="margin-bottom: 25px">
-        <a href="{{ route('conexion.equipo') }}" class="botton2">Conexión al equipo</a>
-    </div>
-    @endif
-@endauth
 @endsection
