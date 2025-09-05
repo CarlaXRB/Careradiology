@@ -21,7 +21,7 @@
         </div>
         <div class="flex justify-end">
             <p>¿Paciente no registrado?</p>
-            <div class="ml-5 mb-5 mr-8"><a href="{{ route('patient.create')}}" class="botton3">Registrar Paciente</a></div>
+            <div class="ml-5 mb-5 mr-8"><a href="{{ route('patient.create')}}" class="botton2">Registrar Paciente</a></div>
         </div>
         <div class="flex items-center mb-4"><label class="txt1">ID Radiografia:</label><input type="text" name="radiography_id" value="{{ $radiography->radiography_id }}" class="border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full text-black dark:text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 mr-10"/></div>
         @error('radiography') <p class="error">{{ $message }}</p> @enderror

@@ -120,16 +120,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::delete('/events/destroy/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
-    Route::get('/view-dicom/studies', [DicomOrthancController::class, 'index'])->name('orthanc.index');
-    Route::get('/view-dicom/study/{studyId}', [DicomOrthancController::class, 'show'])->name('orthanc.show');
-
-    Route::get('/dicomor/studies', [DicomOrthancController::class, 'getStudies'])->name('orthanc.studies');
-    Route::get('/dicomor/studies/{studyId}/instances', [DicomOrthancController::class, 'getInstances'])->name('orthanc.instances');
-    Route::get('/dicomor/instances/{instanceId}/file', [DicomOrthancController::class, 'getInstanceFile'])->name('orthanc.file');
-
     Route::get('/conexion-equipo', [ConnectionController::class, 'index'])->name('conexion.equipo');
-    Route::get('/conexion-equipo/{id}', [ConnectionController::class, 'show'])->name('conexion.show');
+    Route::get('/conexion/{id}', [ConnectionController::class, 'verify'])->name('conexion.verify');
+    Route::get('/conexion/download/{id}', [ConnectionController::class, 'downloadStudy'])->name('conexion.download');
     Route::get('/conexion-equipo/check', [ConnectionController::class, 'check'])->name('conexion.check');
+
 });
 
 Route::get('/dicom', function () {return view('dicom');})->name('dicom');

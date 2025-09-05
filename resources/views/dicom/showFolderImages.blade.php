@@ -3,7 +3,6 @@
 @section('subtitle')
     {{ __('DICOM con Metadatos') }}
 @endsection
-
 @section('content')
 @if ($dicomRecord)
 <div class="flex justify-end">

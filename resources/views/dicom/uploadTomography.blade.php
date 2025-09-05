@@ -14,7 +14,7 @@
 <div class="mx-auto mb-3 px-8">
     <p class="text-[17px] p-5">
     Sube una carpeta con múltiples archivos en formato <b>DICOM</b> para su análisis y procesamiento.  
-    El sistema recopilará y mostrará los metadatos esenciales, optimizando la gestión de imágenes radiológicas.
+    El sistema recopilará y mostrará los metadatos escenciales, optimizando la gestión de imágenes radiológicas.
     </p>
 
     <div class="p-5">

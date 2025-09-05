@@ -43,7 +43,7 @@
 @endauth
 
 <div>
-    <div class="flex justify-center mt-[30px] mb-[30px]"><img src="{{ asset('storage/radiographies/'.$radiography->radiography_uri)}}"/></div>
+    <div class="flex justify-center mt-[30px] mb-[30px]"><img src="{{ asset('storage/radiographies/'.$radiography->radiography_uri)}}" style="max-width:80%; object-fit:contain;" /></div>
         <div class="flex justify-center mb-4">
             @auth @if(auth()->user()->role !== 'user') <div class="mt-2"><a href="{{ route('radiography.tool', $radiography->id) }}" class="botton2">Herramientas</a></div> @endif @endauth
         </div>

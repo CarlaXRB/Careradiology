@@ -15,22 +15,34 @@
         </div>
     <div class="p-5 space-y-6">
         @if($studies && count($studies) > 0)
-            <div class="p-5">
-                <div class="flex mb-5"><h3 class="txt2">Estudios recibidos en el sistema:</h3></div>
-                <ul class="list-disc pl-5 text-gray-200">
-                    @foreach($studies as $study)
-                        <li><a href="{{ route('conexion.show', $study) }}" class="text-white-300 hover:underline">{{ $study }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
-        @else
-            <p class="text-gray-400">⚠️ No se pudo obtener estudios desde Orthanc.</p>
-        @endif
-        <hr class="border-gray-600">
-        <div class="flex"><h3 class="txt3">Servidor DICOM: </h3></div>
-        <div class="bg-gray-900 rounded-2xl shadow-md">
-            <iframe src="http://localhost:8042" class="w-full h-[100vh] rounded-b-2xl border-none"></iframe>
+        <h1 class="txt-title1 mt-8">ESTUDIOS RECIBIDOS</h1>
+        <div class="grid grid-cols-4 gap-4 border-b border-cyan-500 mb-3">
+            <h3 class="txt-head">Fecha</h3>
+            <h3 class="txt-head">Nombre del paciente</h3>
+            <h3 class="txt-head">Centro</h3>
         </div>
+        <ul>
+            @foreach($studies as $study)
+            <div class="flex justify-center grid grid-cols-4 border-b border-gray-600 gap-4 mb-3 text-white pl-6">
+                <div class="flex justify">{{ $study['date'] }}</div>
+                <div>{{ $study['patient'] }}</div>
+                <div class="flex justify-center">{{ $study['institution'] }}</div>
+                <div class="flex justify-center mb-3">
+                    <a href="{{ route('conexion.verify', $study['id']) }}" class="botton2">Ver Estudio</a>
+                    <a href="{{ route('conexion.download', $study['id']) }}" class="botton3">Descargar ZIP</a>
+                </div>
+            </div>
+            @endforeach
+        </ul>
+        @else
+            <p class="text-red-400 ml-5">No se pudo obtener estudios desde el servidor DICOM.</p>
+        @endif
+        <!--
+        <div class="flex"><h3 class="txt3">Servidor DICOM: </h3></div>
+            <div class="bg-gray-900 rounded-2xl shadow-md">
+                <iframe src="http://localhost:8042" class="w-full h-[100vh] rounded-b-2xl border-none"></iframe>
+            </div>
+        -->
     </div>
     
 <script>

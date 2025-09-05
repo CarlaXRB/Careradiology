@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use App\Models\Radiography;
+use App\Models\Tomography;
 use App\Models\Patient;
 
 class DicomController extends Controller
@@ -241,12 +242,12 @@ class DicomController extends Controller
 
         $radiographyUri = $pngFileName;
         $radiographyDicomUri = $dicomFileName;
-        $patient = \App\Models\Patient::findOrFail($request->input('patient_id'));
+        $patient = Patient::findOrFail($request->input('patient_id'));
 
-        \App\Models\Radiography::create([
+        Radiography::create([
             'name_patient' => $patient->name_patient,
             'ci_patient' => $patient->ci_patient,
-            'radiography_id' => $dicomData['patient_id'] ?? 11111111, 
+            'radiography_id' => $dicomData['sop_instance_uid'] ?? $dicomData['study_instance_uid'] ?? $dicomData['patient_id'] ?? 11111111, 
             'radiography_date' => $dicomData['study_date'] ?? now()->toDateString(),
             'radiography_type' => $dicomData['requested_procedure_description'] ?? 'Radiografia',
             'radiography_uri' => $radiographyUri,
@@ -266,9 +267,9 @@ class DicomController extends Controller
         $dicomData = session('dicom_data');
         $newFolderPath = session('tomography_folder_path');
         $newFolderName = session('tomography_folder_name');
-        $patient = \App\Models\Patient::findOrFail($request->input('patient_id'));
+        $patient = Patient::findOrFail($request->input('patient_id'));
 
-        $tomography = new \App\Models\Tomography();
+        $tomography = new Tomography();
         $tomography->name_patient = $patient->name_patient;
         $tomography->ci_patient = $patient->ci_patient;
         $tomography->tomography_id = (isset($dicomData['patient_id']) && is_numeric($dicomData['patient_id'])) ? $dicomData['patient_id'] : 100000;
